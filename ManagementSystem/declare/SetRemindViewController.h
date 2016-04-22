@@ -1,0 +1,19 @@
+//
+//  SetRemindViewController.h
+//  No.1 Pharmacy
+//
+//  Created by JCong on 15/11/23.
+//  Copyright © 2015年 梁健聪. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface SetRemindViewController : UIViewController
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UITextField *textField;
+@property (nonatomic, strong) UITextView *textV;
+@property (nonatomic, strong) UIView *closeV;
+@property (nonatomic, strong) UIPickerView *pickerView;
+@property (nonatomic, strong) UIView *labelView;
++(UIViewController *)viewController:(UIView *)view;
+@end
