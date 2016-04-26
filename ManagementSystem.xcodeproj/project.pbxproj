@@ -119,6 +119,7 @@
 		6F9AFF651C85283500FF7CA6 /* zq4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6F9AFF611C85283500FF7CA6 /* zq4.jpg */; };
 		6FFC6E871C9293BE007E1BB0 /* DetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC6E851C9293BE007E1BB0 /* DetailsViewController.m */; };
 		6FFC6E881C9293BE007E1BB0 /* DetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6FFC6E861C9293BE007E1BB0 /* DetailsViewController.xib */; };
+		8403EF9C1CCDCCCD008F8A06 /* SeachViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8403EF9B1CCDCCCD008F8A06 /* SeachViewViewController.m */; };
 		84210D691CCA1CAC005D16D9 /* SubMyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84210D671CCA1CAC005D16D9 /* SubMyViewController.m */; };
 		84210D6A1CCA1CAC005D16D9 /* SubMyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84210D681CCA1CAC005D16D9 /* SubMyViewController.xib */; };
 		8438AE011CA4C74D00F86068 /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 8438AE001CA4C74D00F86068 /* bg.png */; };
@@ -357,6 +358,8 @@
 		6FFC6E841C9293BE007E1BB0 /* DetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsViewController.h; sourceTree = "<group>"; };
 		6FFC6E851C9293BE007E1BB0 /* DetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsViewController.m; sourceTree = "<group>"; };
 		6FFC6E861C9293BE007E1BB0 /* DetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailsViewController.xib; sourceTree = "<group>"; };
+		8403EF9A1CCDCCCD008F8A06 /* SeachViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeachViewViewController.h; sourceTree = "<group>"; };
+		8403EF9B1CCDCCCD008F8A06 /* SeachViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeachViewViewController.m; sourceTree = "<group>"; };
 		84210D661CCA1CAC005D16D9 /* SubMyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubMyViewController.h; sourceTree = "<group>"; };
 		84210D671CCA1CAC005D16D9 /* SubMyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubMyViewController.m; sourceTree = "<group>"; };
 		84210D681CCA1CAC005D16D9 /* SubMyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SubMyViewController.xib; sourceTree = "<group>"; };
@@ -906,6 +909,8 @@
 				6F8EA7831C9168E500D5C649 /* 群发 */,
 				6F58F9351C8419A2000E45E5 /* 上报项目 */,
 				6F8EFCAE1C83EA440099B59C /* 项目查询 */,
+				8403EF9A1CCDCCCD008F8A06 /* SeachViewViewController.h */,
+				8403EF9B1CCDCCCD008F8A06 /* SeachViewViewController.m */,
 			);
 			name = "功能页面";
 			sourceTree = "<group>";
@@ -1445,6 +1450,7 @@
 				6F8EA74F1C91226700D5C649 /* ZLPhotoTool.m in Sources */,
 				6F9099ED1C9252050094E0B4 /* UIView+JHChainableAnimations.m in Sources */,
 				84B9FE061CBC964700AA5DD4 /* AFURLSessionManager.m in Sources */,
+				8403EF9C1CCDCCCD008F8A06 /* SeachViewViewController.m in Sources */,
 				6F8EA74A1C91226700D5C649 /* ZLNoAuthorityViewController.m in Sources */,
 				84B9FE301CBC966400AA5DD4 /* SDWebImageManager.m in Sources */,
 				6F8EA7701C91529D00D5C649 /* MassViewController.m in Sources */,

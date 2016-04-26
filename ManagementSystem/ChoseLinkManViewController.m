@@ -132,6 +132,7 @@
         
         contactsCell.telLab.text = model.linkMobile;
         telStr = contactsCell.telLab.text;
+        NSLog(@"linkID%@",model.linkID);
         [m_nameDatas addObject:nameStr];
         [m_telDatas addObject:telStr];
         [m_phoneDatas addObject:phoneStr];

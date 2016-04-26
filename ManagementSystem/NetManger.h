@@ -105,6 +105,7 @@ typedef enum
 @property (nonatomic, copy) NSString *projectID;
 @property (nonatomic, copy) NSString *channelID;
 @property (nonatomic, strong) NSArray *formArray;
+@property (nonatomic, copy) NSString *keyword;
 
 @property (nonatomic, strong) NSMutableArray *m_details;
 @property (nonatomic, strong) NSMutableArray *m_projectInfoArr;

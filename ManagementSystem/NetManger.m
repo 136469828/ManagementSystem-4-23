@@ -62,7 +62,7 @@ static NetManger *manger = nil;
             break;
         case RequestOfGetprojectlist:
         {
-            [self homeGetprojectlistWithKeyword:self.isKeyword];
+            [self homeGetprojectlistWithKeyword:self.isKeyword AndKeyword:self.keyword];
         }
             break;
         case RequestOfGetprojectt:
@@ -87,6 +87,9 @@ static NetManger *manger = nil;
             break;
         case RequestOfGetlatestversoin:
         {
+//            [self projectcheck];
+//            [self projectfollow];
+//            [self sendmessage];
             [self systemsetGetlatestversoin];
         }
             break;
@@ -97,7 +100,7 @@ static NetManger *manger = nil;
             break;
         case RequestOfuserGetcontacts:
         {
-            [self userGetcontacts];
+            [self userGetcontactsKeyword:self.keyword];
         }
             break;
         
@@ -347,7 +350,7 @@ static NetManger *manger = nil;
 }
 
 // 项目列表
-- (void)homeGetprojectlistWithKeyword:(BOOL) iskeyword
+- (void)homeGetprojectlistWithKeyword:(BOOL) iskeyword AndKeyword:(NSString *)keyword
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 5;
@@ -359,10 +362,7 @@ static NetManger *manger = nil;
                        @"_code":self.userID_Code,
                        @"content":@"application/json",
                        
-                       @"Keyword": @"sample string 1",
-                       @"Status": @"2",
-                       @"PageIndex": @"3",
-                       @"PageSize": @"4"
+                       @"Keyword": keyword,
                        
                        };
     }
@@ -543,7 +543,7 @@ static NetManger *manger = nil;
                                  @"_code":self.userID_Code,
                                  @"content":@"application/json",
                                  
-                                 @"ProjectId":     @"1", // 项目ID
+                                 @"ProjectId":      array[0], // 项目ID
                                  @"ProjectName":    array[1],// 项目名
                                  @"ApplyMan":       array[2],
                                  @"ApplyManName":   array[3], // 申请人
@@ -687,26 +687,30 @@ static NetManger *manger = nil;
      }];
 }
 // 获取常用联系人列表
-- (void)userGetcontacts
+- (void)userGetcontactsKeyword:(NSString *)keywork
 {
+    if (keywork.length == 0) {
+        keywork = @"0";
+    }
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 5;
     NSDictionary *parameters = @{
                                  @"_appid":@"101",
                                  @"_code":self.userID_Code,
-                                 @"Keyword": @"1",
+                                 @"Keyword":keywork,
                                  };
     NSString *url = [NSString stringWithFormat:@"%@common/user/getcontacts",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
-         NSLog(@"获取常用联系人列表：%@",responseObject[@"data"]);
+         NSLog(@"获取常用联系人列表：%@",responseObject);
          NSArray *dataLists = responseObject[@"data"][@"DataList"];
          NSLog(@"获取常用联系人列表数组个数：%ld",dataLists.count);
          [self.m_getcontacts removeAllObjects];
          for (NSDictionary *dic in dataLists)
          {
              ProjectModel *model = [[ProjectModel alloc] init]; 
-            NSLog(@"%@ %@ %@ %@",dic[@"LinkManName"],dic[@"LinkPhone"],dic[@"LinkMobile"],dic[@"ZhiWuName"]);
+//            NSLog(@"%@ %@ %@ %@",dic[@"LinkManName"],dic[@"LinkPhone"],dic[@"LinkMobile"],dic[@"ZhiWuName"]);
+             model.linkID = dic[@"UserId"];
              model.linkManName = dic[@"LinkManName"];
              model.linkPhone = dic[@"LinkPhone"];
              model.linkMobile = dic[@"LinkMobile"];
@@ -726,6 +730,100 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"获取数据失败"];
      }];
 }
-
-
+// 群发
+- (void)sendmessage
+{
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+    manger.requestSerializer.timeoutInterval = 5;
+    NSDictionary *parameters = @{
+                                 @"_appid":@"101",
+                                 @"_code":self.userID_Code,
+                                 @"content":@"application/json",
+                                 
+                                 @"SendUsers": @[@"1",@"2",@"admin"],
+                                 @"Id": @"14",
+                                 @"UserFrom": @"14",
+                                 @"UserTo": @"14",
+                                 @"CreateTime": [self getDate],
+                                 @"DataContent": @"xxxxx"
+                                 };
+    NSString *url = [NSString stringWithFormat:@"%@common/user/sendmessage",ServerAddressURL];
+    [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
+     {
+         NSLog(@"发送信息：%@",responseObject);
+         [LCProgressHUD showSuccess:@"发送成功"];
+     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+         NSLog(@"error : %@",error);
+         [LCProgressHUD showFailure:@"发送失败"];
+     }];
+}
+- (void)projectcheck
+{
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+    manger.requestSerializer.timeoutInterval = 5;
+    NSDictionary *parameters = @{
+                                 @"_appid":@"101",
+                                 @"_code":self.userID_Code,
+                                 @"content":@"application/json",
+                                 
+                                 @"Id": @"1",
+                                 @"ProjectId": @"2",
+                                 @"ProcessId": @"3",
+                                 @"ProcessName": @"ios",
+                                 @"Number": @"5",
+                                 @"StructureId": @"6",
+                                 @"StructureName": @"swift",
+                                 @"CheckStatus": @"14",
+                                 @"CheckTime": [self getDate],
+                                 @"CheckUserId": @"1",
+                                 @"CheckUserName": @"cong",
+                                 @"CheckCuauses": @"good"
+                                 };
+    NSString *url = [NSString stringWithFormat:@"%@project/home/projectcheck",ServerAddressURL];
+    [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
+     {
+         NSLog(@"项目审查：%@",responseObject);
+         [LCProgressHUD showSuccess:@"数据发送成功"];
+     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+         NSLog(@"error : %@",error);
+         [LCProgressHUD showFailure:@"获取数据失败"];
+     }];
+}
+- (void)projectfollow
+{
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+    manger.requestSerializer.timeoutInterval = 5;
+    NSDictionary *parameters = @{
+                                 @"_appid":@"101",
+                                 @"_code":self.userID_Code,
+                                 @"content":@"application/json",
+                                 
+                                 @"Id": @"1",
+                                 @"ProjectId": @"2",
+                                 @"sType": @"3",
+                                 @"Remark": @"ios test",
+                                 @"CreateUserId": @"5",
+                                 @"CreateUsesrName": @"ios",
+                                 @"CreateTime": @"2016-04-25 09:51:28",
+                                 @"FollowDate": @"2016-04-25 09:51:28"
+                                 };
+    NSString *url = [NSString stringWithFormat:@"%@project/home/projectfollow",ServerAddressURL];
+    [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
+     {
+         NSLog(@"项目跟踪：%@",responseObject[@"data"]);
+         
+     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+         NSLog(@"error : %@",error);
+         [LCProgressHUD showFailure:@"获取数据失败"];
+     }];
+}
+- (NSString *)getDate
+{
+    NSDate *currentDate = [NSDate date];//获取当前时间，日期
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"YYYY/MM/dd hh:mm"];
+    NSString *dateString = [dateFormatter stringFromDate:currentDate];
+    NSLog(@"dateString:%@",dateString);
+    return dateString;
+}
 @end

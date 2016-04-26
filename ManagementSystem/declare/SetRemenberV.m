@@ -657,7 +657,7 @@
             [m_StrArr addObject:str];
         }
         NSLog(@"%@",m_StrArr);
-        NSArray *arr = @[@"2",
+        NSArray *arr = @[@"0",
                          projectName,
                          @"3",
                          projectApplyName,

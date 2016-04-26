@@ -23,6 +23,8 @@
     NSMutableArray *m_phoneDatas;
     NSMutableArray *m_telDatas;
     NetManger *manger;
+    
+    UITextField *seachTextField;
 }
 
 @end
@@ -66,19 +68,19 @@
     hearView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40)];
     //    hearView.backgroundColor = [UIColor redColor];
     [self.view addSubview:hearView];
-    UITextField *seachTextField = [[UITextField alloc] initWithFrame:CGRectMake(15, 0, SCREEN_WIDTH - 80, 30)];
+    seachTextField = [[UITextField alloc] initWithFrame:CGRectMake(15, 0, SCREEN_WIDTH - 80, 30)];
     seachTextField.delegate = self;
     seachTextField.layer.borderColor = [UIColor lightGrayColor].CGColor; // set color as you want.
     seachTextField.layer.borderWidth = 1.0; // set borderWidth as you want.
     seachTextField.layer.cornerRadius=8.0f;
     seachTextField.layer.masksToBounds=YES;
-    
+    seachTextField.clearButtonMode = UITextFieldViewModeAlways;
     [hearView addSubview:seachTextField];
     
     UIButton *seachBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [seachBtn setImage:[UIImage imageNamed:@"seachBtn"] forState:UIControlStateNormal];
     seachBtn.frame = CGRectMake(SCREEN_WIDTH - 55, 0, 30, 30);
-    //    [seachBtn addTarget:seachTextField action:@selector(seachOnSeach) forControlEvents:UIControlEventTouchDown];
+    [seachBtn addTarget:self action:@selector(seachOnBtn) forControlEvents:UIControlEventTouchDown];
     [hearView addSubview:seachBtn];
     
 }
@@ -108,6 +110,7 @@
 }
 #pragma mark - tableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
     return manger.m_getcontacts.count +count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -207,8 +210,14 @@
     //    [UIView commitAnimations];
 }
 #pragma mark - Btn逻辑
-- (void)seachOn{
-    NSLog(@"clickOn");
+
+- (void)seachOnBtn
+{
+//    NSLog(@"%@",seachTextField.text);
+    manger = [NetManger shareInstance];
+    manger.keyword = seachTextField.text;
+    [manger loadData:RequestOfuserGetcontacts];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getcontacts" object:nil];
 
 }
 - (void)pushAddVC

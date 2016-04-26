@@ -9,6 +9,8 @@
 #import "ProjectSrachViewController.h"
 #import "ProjectSeachTableViewCell.h"
 #import "ProcessViewController.h"
+#import "SeachViewViewController.h"
+#import "KeyboardToolBar.h"
 #import "NetManger.h"
 #import "ProjectModel.h"
 //#import "LCProgressHUD.h"
@@ -17,6 +19,8 @@
     NSString *stateStr;
     NetManger *manger;
     NSArray *datas;
+    
+    UITextField *seachTextField;
 }
 @end
 
@@ -27,12 +31,16 @@
     // Do any additional setup after loading the view from its nib.
     [self setTableView]; // 创建TableView
     [self registerNib]; //注册Cell
+    
+    
+}
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     manger= [NetManger shareInstance];
     manger.isKeyword = NO;
     [manger loadData:RequestOfGetprojectlist];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"GetprojectlistWithKeyword" object:nil];
-    
-    
 }
 #pragma mark - Btn逻辑
 - (void)seachOn{
@@ -48,19 +56,20 @@
     hearView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40)];
     //    hearView.backgroundColor = [UIColor redColor];
     [self.view addSubview:hearView];
-    UITextField *seachTextField = [[UITextField alloc] initWithFrame:CGRectMake(15, 0, SCREEN_WIDTH - 80, 30)];
+    seachTextField = [[UITextField alloc] initWithFrame:CGRectMake(15, 0, SCREEN_WIDTH - 80, 30)];
     seachTextField.delegate = self;
     seachTextField.layer.borderColor = [UIColor lightGrayColor].CGColor; // set color as you want.
     seachTextField.layer.borderWidth = 1.0; // set borderWidth as you want.
     seachTextField.layer.cornerRadius=8.0f;
     seachTextField.layer.masksToBounds=YES;
-    
+    seachTextField.clearButtonMode = UITextFieldViewModeAlways;
+    [KeyboardToolBar registerKeyboardToolBar:seachTextField];
     [hearView addSubview:seachTextField];
     
     UIButton *seachBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [seachBtn setImage:[UIImage imageNamed:@"seachBtn"] forState:UIControlStateNormal];
     seachBtn.frame = CGRectMake(SCREEN_WIDTH - 55, 0, 30, 30);
-    //    [seachBtn addTarget:seachTextField action:@selector(seachOnSeach) forControlEvents:UIControlEventTouchDown];
+    [seachBtn addTarget:self action:@selector(seachOnSeach) forControlEvents:UIControlEventTouchDown];
     [hearView addSubview:seachBtn];
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(8, hearView.bounds.size.height - 1, ScreenWidth - 16, 0.5)];
     line.backgroundColor = [UIColor lightGrayColor];
@@ -108,44 +117,9 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ProjectSeachTableViewCell *proSeachCell = [_tableView dequeueReusableCellWithIdentifier:@"ProjectSeachTableViewCell"];
-    if (manger.m_projectInfoArr.count == 0) {
-        if (indexPath.row % 2) {
-            statetype = 0;
-        }
-        else if (indexPath.row % 3)
-        {
-            statetype = 1;
-        }
-        else
-        {
-            statetype = 2;
-        }
-        switch (statetype) {
-            case 0:
-            {
-                stateStr = @"审批未能获得通过";
-                proSeachCell.stateLabel.text = stateStr;
-                proSeachCell.stateLabel.textColor = [UIColor redColor];
-            }
-                break;
-            case 1:
-            {
-                stateStr = @"审批通过";
-                proSeachCell.stateLabel.text = stateStr;
-                proSeachCell.stateLabel.textColor = [UIColor blackColor];
-            }
-                break;
-            case 2:
-            {
-                stateStr = @"审批中";
-                proSeachCell.stateLabel.text = stateStr;
-                proSeachCell.stateLabel.textColor = [UIColor blackColor];
-            }
-                break;
-    
-            default:
-                break;
-        }
+    if (manger.m_projectInfoArr.count == 0)
+    {
+        proSeachCell.stateLabel.text = @"无";
         proSeachCell.titleLab.text = @"无";
         proSeachCell.nameLab.text = @"无";
         proSeachCell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -202,8 +176,13 @@
     //    
     //    [UIView commitAnimations];
 }
-- (void)seachOnSeach{
-    NSLog(@"seachOnSeach");
+- (void)seachOnSeach
+{
+    NSLog(@"seachOnSeach %@",seachTextField.text);
+    SeachViewViewController *seachVC = [[SeachViewViewController alloc] init];
+    seachVC.keyWord = seachTextField.text;
+    seachVC.title = @"搜索结果";
+    [self.navigationController pushViewController:seachVC animated:YES];
 }
 - (void)hideHUD {
     

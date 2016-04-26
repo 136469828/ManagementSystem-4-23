@@ -32,7 +32,7 @@
 @property (nonatomic, copy) NSString *linkPhone;        // 联系人手机
 @property (nonatomic, copy) NSString *linkMobile;       // 联系人座机
 @property (nonatomic, copy) NSString *zhiWuName;        // 联系人职务
-
+@property (nonatomic, copy) NSString *linkID;
 
 
 @end
