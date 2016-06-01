@@ -127,27 +127,28 @@
             }
             else if ([model.status isEqualToString:@"14"])
             {
-                model.status = @"审批中";
+                model.status = @"错误";
             }
-            if ([model.processStatus isEqualToString:@"0"]) {
-                model.processStatus = @"正常";
-            }
-            else
+            else if ([model.status isEqualToString:@"1"])
             {
-                model.processStatus = @"待定";
+                model.status = @"审批通过";
+            }
+            else if ([model.status isEqualToString:@"0"])
+            {
+                model.status = @"未审批";
             }
             
             dataArr = @[model.applyManName, // 申请人
                         model.telephone,    // 电话
                         model.createTime,   // 时间
                         model.natureType,   // 项目性质
-                        model.test3,        // 投资总额
+                        model.money,        // 投资总额
                         model.projectName,  // 项目名称
-                        model.companyType,  // 投资种类
                         model.categoryType,  // 行业
+                        model.classTypeName, // 投资种类
                         model.processStatus, // 项目进度标识
                         model.questions,    // 存在问题
-                        model.classTypeName,// 项目分类
+                        model.companyType,// 项目分类
                         model.status,    // 项目状态标识
                         ];
             

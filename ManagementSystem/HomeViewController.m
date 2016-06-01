@@ -44,8 +44,8 @@
 //    self.view.backgroundColor = [UIColor lightGrayColor];
     self.title = @"欢迎使用莆田北岸发改局管理系统";
     // Do any additional setup after loading the view from its nib.
-    NSArray *titles = @[@"公告", @"提醒信息", @"项目查询", @"上报项目", @"我的项目", @"审批项目", @"群发消息", @"常用联系人",@"设置"];
-    NSArray *imageNames = @[@"home_gonggao",@"home_tixin",@"home_chaxun.jpg",@"home_shangbao",@"home_wodexiangmu",@"home_shenpi",@"home_qunfa",@"home_lianxiren",@"home_setting"];
+    NSArray *titles = @[@"公告", @"提醒信息", @"项目查询", @"上报项目", @"我的项目", @"群发消息", @"常用联系人",@"设置",@" "];
+    NSArray *imageNames = @[@"home_gonggao",@"home_tixin",@"home_chaxun.jpg",@"home_shangbao",@"home_wodexiangmu",@"home_qunfa",@"home_lianxiren",@"home_setting",@" "];
     [self drawHoneViewWithAppviewW:ScreenWidth/3 AppviewH:100 Totalloc:3 Count:9 ImageArray:imageNames TitleArray:titles];
     [self _initAnnouncementView];
 }
@@ -163,30 +163,30 @@
             [self.navigationController pushViewController:seachV animated:YES];
         }
             break;
-        case 1005:
-        {
-            //SeachViewController *seachV= [[SeachViewController alloc] init];
-            ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
-            seachV.title = @"审批项目";
-           // seachV.state = btn.tag;
-            [self.navigationController pushViewController:seachV animated:YES];
-        }
+//        case 1005:
+//        {
+//            //SeachViewController *seachV= [[SeachViewController alloc] init];
+//            ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
+//            seachV.title = @"审批项目";
+//           // seachV.state = btn.tag;
+//            [self.navigationController pushViewController:seachV animated:YES];
+//        }
             break;
-        case 1006:
+        case 1005:
         {
             MassViewController *massVC= [[MassViewController alloc] init];
             massVC.title = @"群发消息";
             [self.navigationController pushViewController:massVC animated:YES];
         }
             break;
-        case 1007:
+        case 1006:
         {
             ContactsViewController *contactsVC= [[ContactsViewController alloc] init];
             contactsVC.title = @"常用联系人";
             [self.navigationController pushViewController:contactsVC animated:YES];
         }
             break;
-        case 1008:
+        case 1007:
         {
             SettingViewController *setVC= [[SettingViewController alloc] init];
             setVC.title = @"账号设置";

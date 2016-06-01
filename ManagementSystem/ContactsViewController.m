@@ -11,6 +11,8 @@
 #import "AddLinkmanViewController.h"
 #import "ProjectModel.h"
 #import "NetManger.h"
+#import "MJRefresh.h"
+#import "KeyboardToolBar.h"
 //#import "LCProgressHUD.h"
 @interface ContactsViewController ()<UIActionSheetDelegate>
 {
@@ -44,10 +46,27 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getcontacts" object:nil];
     [self setTableView];
     [self registerNib];
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        // 进入刷新状态后会自动调用这个block
+    }];
+    
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadNewData方法）
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+    
+    // 马上进入刷新状态
+    [self.tableView.header beginRefreshing];
     
 
 }
-
+#pragma mark - 页面刷新
+- (void)loadNewData
+{
+    manger = [NetManger shareInstance];
+    manger.keyword = @"";
+    [manger loadData:RequestOfuserGetcontacts];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getcontacts" object:nil];
+    [_tableView.header endRefreshing];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -75,6 +94,7 @@
     seachTextField.layer.cornerRadius=8.0f;
     seachTextField.layer.masksToBounds=YES;
     seachTextField.clearButtonMode = UITextFieldViewModeAlways;
+    [KeyboardToolBar registerKeyboardToolBar:seachTextField];
     [hearView addSubview:seachTextField];
     
     UIButton *seachBtn = [UIButton buttonWithType:UIButtonTypeCustom];

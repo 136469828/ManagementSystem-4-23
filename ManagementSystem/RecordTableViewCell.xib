@@ -21,8 +21,8 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="梁健聪" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EzZ-Fp-f35">
-                        <rect key="frame" x="267" y="47" width="45" height="18"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="无" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EzZ-Fp-f35">
+                        <rect key="frame" x="297" y="47" width="15" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
@@ -46,7 +46,9 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="nameLab" destination="EzZ-Fp-f35" id="74J-ZR-g4i"/>
                 <outlet property="recordLabel" destination="w1D-61-W8M" id="CVz-6z-F7o"/>
+                <outlet property="timeLab" destination="N9D-mY-2cL" id="bTp-qF-u28"/>
             </connections>
             <point key="canvasLocation" x="378" y="304.5"/>
         </tableViewCell>

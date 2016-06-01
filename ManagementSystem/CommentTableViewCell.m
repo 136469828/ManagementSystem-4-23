@@ -9,6 +9,7 @@
 #import "CommentTableViewCell.h"
 #import "SubMyViewController.h"
 #import "ProcessViewController.h"
+#import "NetManger.h"
 @implementation CommentTableViewCell
 
 - (void)awakeFromNib {
@@ -46,11 +47,11 @@
 #pragma mark - BtnAction
 - (void)agreeAction{
     // 单击同意，进入技术部领导审批，同时进去操作人的已办事项
-    
-    // 跳转到我的项目VC
-    SubMyViewController *seachVC = [[SubMyViewController alloc] init];
-    seachVC.title = @"我的项目";
-    [[ProcessViewController viewController:self].navigationController pushViewController:seachVC animated:YES];
+//    NSLog(@"%@",self.ID);
+    NetManger *manger = [NetManger shareInstance];
+    manger.projectID = self.ID;
+    [manger loadData:RequestOfProjectcheck];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"Projectcheck" object:nil];
     
     /* **
          DetailsViewController *detailsVC = [[DetailsViewController alloc] init];
@@ -58,6 +59,14 @@
          detailsVC.proID = [NSString stringWithFormat:@"%d",self.statet];
          [self.navigationController pushViewController:detailsVC animated:YES];
      ** */
+}
+- (void)reloadData
+{
+    // 跳转到我的项目VC
+    SubMyViewController *seachVC = [[SubMyViewController alloc] init];
+    seachVC.title = @"我的项目";
+    [[ProcessViewController viewController:self].navigationController pushViewController:seachVC animated:YES];
+
 }
 #pragma mark - textViewDelegate
 - (void)textViewDidBeginEditing:(UITextView *)textView{

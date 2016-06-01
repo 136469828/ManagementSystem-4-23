@@ -11,15 +11,28 @@
 #import "ProgressTableViewCell.h"
 #import "DetailsViewController.h"
 #import "RecordTableViewCell.h"
+#import "NetManger.h"
+#import "ProjectModel.h"
 @interface ProcessViewController ()
-
+{
+    NetManger *manger;
+    NSInteger count;
+}
 @end
 
 @implementation ProcessViewController
-
+// 销毁通知中心
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    manger = [NetManger shareInstance];
+//    NSLog(@"%d",self.statet);
+    manger.projectID = [NSString stringWithFormat:@"%d",self.statet];
+    [manger loadData:RequestOfGetprojectts];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"Getprojects" object:nil];
     [self setTableView];
     [self registerNib];
 }
@@ -30,6 +43,7 @@
 }
 - (void)setTableView{
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 10, SCREEN_WIDTH, SCREEN_HEIGHT - 69) style:UITableViewStylePlain];
+    self.tableView.estimatedRowHeight = 120;
     _tableView.delegate = self;
     _tableView.dataSource = self;
     _tableView.tableHeaderView = hearView;
@@ -46,15 +60,21 @@
 }
 #pragma mark - 注册Cell
 - (void)registerNib{
-    NSArray *registerNibs = @[@"CommentTableViewCell",@"ProgressTableViewCell",@"RecordTableViewCell"];
+    NSArray *registerNibs = @[@"CommentTableViewCell",@"ProgressTableViewCell"];
     for (int i = 0 ; i < registerNibs.count; i++) {
         [_tableView registerNib:[UINib nibWithNibName:registerNibs[i] bundle:nil] forCellReuseIdentifier:registerNibs[i]];
     }
     
 }
 #pragma mark - tableViewDelegate
+- (void)reloadData
+{
+    [self.tableView reloadData];
+    
+}
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 3+1;
+    count = 2+manger.m_processArr.count;
+    return 2+manger.m_processArr.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *cellIdentifier = @"cell";
@@ -69,40 +89,50 @@
         [btn setTitle:@"项目详细>>" forState:UIControlStateNormal];
         [btn addTarget:self action:@selector(pushProject) forControlEvents:UIControlEventTouchDown];
         [cell.contentView addSubview:btn];
-        cell.textLabel.text = self.data[3];
+        cell.textLabel.text = @"最近项目进度";
         cell.textLabel.font = [UIFont systemFontOfSize:13];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
-    if (indexPath.row == 1) {
-//        NSLog(@"%d",self.statet);
-        ProgressTableViewCell *cellProgess = [tableView dequeueReusableCellWithIdentifier:@"ProgressTableViewCell"];
-        cellProgess.nameLab.text = self.data[0];
-        cellProgess.phoneLab.text = self.data[1];
-        cellProgess.stateLab.text = self.data[2];
-        cellProgess.departmentLab.text = @"暂无";
-        cellProgess.selectionStyle = UITableViewCellSelectionStyleNone;
-        [cellProgess setState:self.statet];
-        return cellProgess;
-    }
-    if (indexPath.row == 2) {
+    if (indexPath.row == count-1) {
         CommentTableViewCell *cellComment = [tableView dequeueReusableCellWithIdentifier:@"CommentTableViewCell"];
+        cellComment.ID = [NSString stringWithFormat:@"%d",self.statet];
         cellComment.selectionStyle = UITableViewCellSelectionStyleNone;
         return cellComment;
     }
-    RecordTableViewCell *cellRecord = [tableView dequeueReusableCellWithIdentifier:@"RecordTableViewCell"];
-    cellRecord.selectionStyle = UITableViewCellSelectionStyleNone;
-    return cellRecord;
 
+    ProgressTableViewCell *cellProgess = [tableView dequeueReusableCellWithIdentifier:@"ProgressTableViewCell"];
+    if (manger.m_processArr.count == 0) {
+        cellProgess.nameLab.text = @"暂无";
+        cellProgess.phoneLab.text = @"暂无";
+        cellProgess.stateLab.text = @"暂无";
+        cellProgess.departmentLab.text = @"暂无";
+        cellProgess.record.text = @"暂无";
+        cellProgess.selectionStyle = UITableViewCellSelectionStyleNone;
+        [cellProgess setState:self.statet];
+        
+    }
+    else
+    {
+        ProjectModel *model = manger.m_processArr[indexPath.row-1];
+        cellProgess.nameLab.text = model.processCheckUserName;
+        cellProgess.phoneLab.text = model.processCheckTime;
+        cellProgess.stateLab.text = self.stateStr;
+        cellProgess.departmentLab.text = model.processStructureName;
+        cellProgess.record.text = model.processCheckCuauses;
+        cellProgess.selectionStyle = UITableViewCellSelectionStyleNone;
+        [cellProgess setState:self.statet];
+    }
+    return cellProgess;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row == 0) {
         return 40;
     }
-    if (indexPath.row == 1) {
-        return 120;
-    }
-    return 200;
+//    if (indexPath.row == 1) {
+//        return 120;
+//    }
+    return 150;
 }
 -(void)hideKeyboard
 {

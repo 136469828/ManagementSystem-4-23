@@ -52,6 +52,9 @@
         CGFloat width = [UIScreen mainScreen].bounds.size.width/6-2;
         for (int i = 0; i < selectPhotos.count; i++) {
             UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(i%5*(width+2), i/5*(width+2), width, width)];
+            // 将data上传到服务器
+            NSData *data=UIImageJPEGRepresentation(selectPhotos[i], 1.0);
+//            NSLog(@"imageData%@",data);
             imgView.image = selectPhotos[i];
             [weakSelf.ptotoOne addSubview:imgView];
         }
@@ -119,10 +122,9 @@
         
         if ([next isKindOfClass:[viewCtr class]]) {
             
-            //            [next presentViewController:photoPickerController animated:YES completion:nil];
+            // [next presentViewController:photoPickerController animated:YES completion:nil];
             [next dismissViewControllerAnimated:YES completion:nil];
             return;
-            
         }
         
     }

@@ -12,9 +12,18 @@
 
 - (void)awakeFromNib {
     // Initialization code
-    self.recordLabel.text = @"如图,很多页面其实就是这种展示结果,通常需要imageView,textLabel,detailTextlabel,而UITableViewCell本身提供了方便的自动布局(当有图片和没图片时,textLabel和detailLabel的位置会左右自动调整). 但是图片的大小却是没有办法固定的(直接设置imageView.frame是无法固定imageView的大小的),那么一般来说解决这个问题的办法有两种:";
+    self.recordLabel.text = @"暂无留言";
+    self.timeLab.text = [self getDate];
 }
-
+- (NSString *)getDate
+{
+    NSDate *currentDate = [NSDate date];//获取当前时间，日期
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"YYYY/MM/dd hh:mm"];
+    NSString *dateString = [dateFormatter stringFromDate:currentDate];
+    NSLog(@"dateString:%@",dateString);
+    return dateString;
+}
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 

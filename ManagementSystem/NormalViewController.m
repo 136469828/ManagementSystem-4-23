@@ -10,6 +10,7 @@
 #import "NormalTableViewCell.h"
 #import "NetManger.h"
 #import "ProjectModel.h"
+#import "MJRefresh.h"
 //#import "LCProgressHUD.h"
 @interface NormalViewController ()<UITableViewDataSource,UITableViewDelegate>
 {
@@ -27,19 +28,36 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    manger = [NetManger shareInstance];
-    manger.channelID = @"1002";
-    [manger loadData:RequestOfGetarticlelist];
-    
+//    manger = [NetManger shareInstance];
+//    manger.channelID = @"1002";
+//    [manger loadData:RequestOfGetarticlelist];
+    [self loadNewData];
     [self setTableView];
     [self registerNib];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getarticlelist" object:nil];
+    self.normalTableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        // 进入刷新状态后会自动调用这个block
+    }];
     
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadNewData方法）
+    self.normalTableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+    
+    // 马上进入刷新状态
+    [self.normalTableView.header beginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+#pragma mark - 页面刷新
+- (void)loadNewData
+{
+    manger = [NetManger shareInstance];
+    manger.channelID = @"1002";
+    [manger loadData:RequestOfGetarticlelist];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getarticlelist" object:nil];
+    [_normalTableView.header endRefreshing];
 }
 - (void)reloadDataw
 {

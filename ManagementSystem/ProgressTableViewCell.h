@@ -17,5 +17,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *phoneLab;
 @property (weak, nonatomic) IBOutlet UILabel *stateLab;
 @property (weak, nonatomic) IBOutlet UILabel *departmentLab;
+@property (weak, nonatomic) IBOutlet UILabel *record;
 
 @end

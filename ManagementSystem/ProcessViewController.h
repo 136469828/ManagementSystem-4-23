@@ -14,6 +14,6 @@
 }
 @property UITableView *tableView;
 @property (nonatomic, assign) int statet;
-@property (nonatomic, strong) NSArray *data;
+@property (nonatomic, copy) NSString *stateStr;
 +(UIViewController *)viewController:(UIView *)view;
 @end

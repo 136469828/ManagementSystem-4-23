@@ -56,6 +56,7 @@
 #define GCD_MAIN(block)             dispatch_async(dispatch_get_main_queue(), block)
 
 // 网络请求
-#define ServerAddressURL  @"http://192.168.0.105:88/"
-
+//#define ServerAddressURL  @"http://192.168.0.105:88/"
+#define ServerAddressURL  @"http://182.92.150.211:97/"
+//#define ServerAddressURL  @"http://182.92.150.211:97/help/"
 #endif /* tool_h */

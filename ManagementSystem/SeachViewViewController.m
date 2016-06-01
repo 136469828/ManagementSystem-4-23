@@ -97,7 +97,15 @@
         }
         else if ([model.status isEqualToString:@"14"])
         {
-            model.status = @"审批中";
+            model.status = @"错误";
+        }
+        else if ([model.status isEqualToString:@"0"])
+        {
+            model.status = @"未审批";
+        }
+        else if ([model.status isEqualToString:@"1"])
+        {
+            model.status = @"审批通过";
         }
         self.ID = model.projectIDofModel;
         NSLog(@"NetManger *manger %@",self.ID);
@@ -105,7 +113,7 @@
         proSeachCell.nameLab.text = model.applyManName;
         proSeachCell.timeLab.text = model.createTime;
         proSeachCell.stateLabel.text = [NSString stringWithFormat:@"当前状态:%@",model.status] ;
-        proSeachCell.classTypeLab.text = model.classTypeName;
+        proSeachCell.natureTypeLab.text = model.natureType;
         proSeachCell.tag = [self.ID integerValue];
         proSeachCell.selectionStyle = UITableViewCellSelectionStyleNone;
         datas = @[proSeachCell.nameLab.text,model.telephone,proSeachCell.stateLabel.text,proSeachCell.timeLab.text];
@@ -119,7 +127,6 @@
     
     ProcessViewController *proVC = [[ProcessViewController alloc] init];
     proVC.statet = (int)cell.tag;
-    proVC.data = datas;
     //    NSLog(@"cellTag%ld",cell.tag);
     proVC.title = @"项目进度";
     [self.navigationController pushViewController:proVC animated:YES];

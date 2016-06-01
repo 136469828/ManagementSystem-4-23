@@ -10,5 +10,7 @@
 
 @interface RecordTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *recordLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeLab;
+@property (weak, nonatomic) IBOutlet UILabel *nameLab;
 
 @end

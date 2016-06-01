@@ -25,17 +25,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.navigationController.title = @"我的项目";
-    // Do any additional setup after loading the view from its nib.
-    [self setTableView]; // 创建TableView
-    [self registerNib]; //注册Cell
     manger= [NetManger shareInstance];
     manger.isKeyword = NO;
     [manger loadData:RequestOfGetprojectlist];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"GetprojectlistWithKeyword" object:nil];
-    
-    
+    self.navigationController.title = @"我的项目";
+    // Do any additional setup after loading the view from its nib.
+    [self setTableView]; // 创建TableView
+    [self registerNib]; //注册Cell
 }
 
 #pragma mark - Btn逻辑
@@ -113,43 +110,6 @@
 {
     ProjectSeachTableViewCell *proSeachCell = [_tableView dequeueReusableCellWithIdentifier:@"ProjectSeachTableViewCell"];
     if (manger.m_projectInfoArr.count == 0) {
-        if (indexPath.row % 2) {
-            statetype = 0;
-        }
-        else if (indexPath.row % 3)
-        {
-            statetype = 1;
-        }
-        else
-        {
-            statetype = 2;
-        }
-        switch (statetype) {
-            case 0:
-            {
-                stateStr = @"审批未能获得通过";
-                proSeachCell.stateLabel.text = stateStr;
-                proSeachCell.stateLabel.textColor = [UIColor redColor];
-            }
-                break;
-            case 1:
-            {
-                stateStr = @"审批通过";
-                proSeachCell.stateLabel.text = stateStr;
-                proSeachCell.stateLabel.textColor = [UIColor blackColor];
-            }
-                break;
-            case 2:
-            {
-                stateStr = @"审批中";
-                proSeachCell.stateLabel.text = stateStr;
-                proSeachCell.stateLabel.textColor = [UIColor blackColor];
-            }
-                break;
-                
-            default:
-                break;
-        }
         proSeachCell.titleLab.text = @"无";
         proSeachCell.nameLab.text = @"无";
         proSeachCell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -172,7 +132,7 @@
         proSeachCell.nameLab.text = model.applyManName;
         proSeachCell.timeLab.text = model.createTime;
         proSeachCell.stateLabel.text = [NSString stringWithFormat:@"当前状态:%@",model.status] ;
-        proSeachCell.classTypeLab.text = model.classTypeName;
+        proSeachCell.natureTypeLab.text = model.natureType;
         proSeachCell.tag = [self.ID integerValue];
         proSeachCell.selectionStyle = UITableViewCellSelectionStyleNone;
         datas = @[proSeachCell.nameLab.text,model.telephone,proSeachCell.stateLabel.text,proSeachCell.timeLab.text];

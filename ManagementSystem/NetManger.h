@@ -87,7 +87,11 @@ typedef enum
     
     RequestOfAddfeedbacktest,       // 添加系统反馈测试
     
-    RequestOfuserGetcontacts        // 获取常用联系人
+    RequestOfuserGetcontacts,        // 获取常用联系人
+    
+    RequestOfGetprojectts,           // 项目进度详情
+    
+    RequestOfProjectcheck           // 项目进度详情
     
     
 }RequestState;
@@ -107,10 +111,12 @@ typedef enum
 @property (nonatomic, strong) NSArray *formArray;
 @property (nonatomic, copy) NSString *keyword;
 
+@property (nonatomic, copy) NSString *userId;
 @property (nonatomic, strong) NSMutableArray *m_details;
 @property (nonatomic, strong) NSMutableArray *m_projectInfoArr;
 @property (nonatomic, strong) NSMutableArray *m_listArr;
 @property (nonatomic, strong) NSMutableArray *m_getcontacts;
+@property (nonatomic, strong) NSMutableArray *m_processArr;
 @property (nonatomic, assign) BOOL isKeyword;
 + (instancetype)shareInstance;
 - (void)loadData:(RequestState)requet;

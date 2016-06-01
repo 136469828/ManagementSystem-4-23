@@ -86,8 +86,8 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="classTypeLab" destination="Qof-6g-Qaf" id="gJe-Cj-Ajc"/>
                 <outlet property="nameLab" destination="rFs-2p-s3b" id="cH0-OY-gsI"/>
+                <outlet property="natureTypeLab" destination="Qof-6g-Qaf" id="hRp-9i-OUh"/>
                 <outlet property="stateLabel" destination="tlq-z1-2j7" id="6Pu-5m-Nen"/>
                 <outlet property="timeLab" destination="cyw-nu-qnz" id="loc-ry-a0v"/>
                 <outlet property="titleLab" destination="To3-sx-Au9" id="7dD-js-jY6"/>

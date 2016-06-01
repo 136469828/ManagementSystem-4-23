@@ -87,9 +87,11 @@ static NetManger *manger = nil;
             break;
         case RequestOfGetlatestversoin:
         {
+
 //            [self projectcheck];
 //            [self projectfollow];
 //            [self sendmessage];
+//            [self getmessagelist];
             [self systemsetGetlatestversoin];
         }
             break;
@@ -101,6 +103,16 @@ static NetManger *manger = nil;
         case RequestOfuserGetcontacts:
         {
             [self userGetcontactsKeyword:self.keyword];
+        }
+            break;
+        case RequestOfGetprojectts:
+        {
+            [self homeGetprojectWithProjectIDs:self.projectID];
+        }
+            break;
+        case RequestOfProjectcheck:
+        {
+            [self projectcheck:self.projectID];
         }
             break;
         
@@ -159,8 +171,7 @@ static NetManger *manger = nil;
  POST	systemset/addfeedbacktest
  添加系统反馈测试
  */
-
-// 获取内容列表 ChannelId值说明： 1001 公告 1002 提醒信息 1003 群发消息
+#pragma mark - 获取内容列表 ChannelId值说明： 1001 公告 1002 提醒信息 1003 群发消息
 - (void)articleGetarticlelistWithChannelID:(NSString *)channel
 {
     
@@ -170,6 +181,8 @@ static NetManger *manger = nil;
                                  @"_appid" : @"101",
                                  @"_code":self.userID_Code,
                                  @"ChannelId": channel,
+                                 @"PageIndex": @"1",
+                                 @"PageSize": @"3"
                                  };
     //@"http://192.168.1.4:88/common/user/login"
     NSString *url = [NSString stringWithFormat:@"%@common/article/getarticlelist",ServerAddressURL];
@@ -212,7 +225,7 @@ static NetManger *manger = nil;
      }];
     
 }
-// 上传 ResourceType值说明： 1 头像 201 项目图片
+#pragma mark - 上传 ResourceType值说明： 1 头像 201 项目图片
 - (void)fileUpload
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -232,7 +245,7 @@ static NetManger *manger = nil;
      }];
     
 }
-// 广告列表
+#pragma mark - 广告列表
 - (void)advertiseGetlist
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -251,7 +264,7 @@ static NetManger *manger = nil;
      }];
 }
 
-// 登录
+#pragma mark - 登录
 - (void)userLoginName:(NSString *)name AndPassword:(NSString *)password
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -271,6 +284,7 @@ static NetManger *manger = nil;
          self.title = responseObject[@"msg"];
          if ([responseObject[@"msg"] isEqualToString:@"success"]) {
              self.userID_Code = responseObject[@"data"][@"Code"];
+             self.userId = responseObject[@"data"][@"UserId"];
              NSDictionary *dic = [NSDictionary dictionaryWithDictionary:responseObject[@"data"]];
              NSMutableArray *m_datas = [[NSMutableArray alloc] initWithCapacity:0];
              for (NSString *str in dic)
@@ -295,7 +309,7 @@ static NetManger *manger = nil;
    
 }
 
-// 修改个人信息
+#pragma mark - 修改个人信息
 - (void)userUpdate
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -349,7 +363,7 @@ static NetManger *manger = nil;
      }];
 }
 
-// 项目列表
+#pragma mark - 项目列表
 - (void)homeGetprojectlistWithKeyword:(BOOL) iskeyword AndKeyword:(NSString *)keyword
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -361,7 +375,6 @@ static NetManger *manger = nil;
                        @"_appid":@"101",
                        @"_code":self.userID_Code,
                        @"content":@"application/json",
-                       
                        @"Keyword": keyword,
                        
                        };
@@ -372,14 +385,14 @@ static NetManger *manger = nil;
                        @"_appid":@"101",
                        @"_code":self.userID_Code,
                        @"content":@"application/json",
-                       @"Status": @"2",
+                       @"Status": @"0",
                        };
     }
     NSString *url = [NSString stringWithFormat:@"%@project/home/getprojectlist",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
          // Status 14 未通过 2通过
-         NSLog(@"项目列表：%@",responseObject[@"data"][@"DataList"]);
+         NSLog(@"项目列表：%@",responseObject);
          NSArray *dataLists = responseObject[@"data"][@"DataList"];
          NSLog(@"%ld",dataLists.count);
 //         for (int i = 0; i< dataLists.count; i++)
@@ -394,13 +407,13 @@ static NetManger *manger = nil;
              model.telephone        = [NSString stringWithFormat:@"%@",dic[@"Telephone"]];
              model.createTime       = [NSString stringWithFormat:@"%@",dic[@"CreateTime"]];
              model.natureType       = [NSString stringWithFormat:@"%@",dic[@"NatureTypeName"]];
-             model.test3            = @"暂无";
+             model.money            = @"暂无";
              model.projectName      = [NSString stringWithFormat:@"%@",dic[@"ProjectName"]];
              model.categoryType     = [NSString stringWithFormat:@"%@",dic[@"CategoryTypeName"]];
              model.companyType      = [NSString stringWithFormat:@"%@",dic[@"CompanyTypeName"]];
              model.processStatus    = [NSString stringWithFormat:@"%@",dic[@"ProcessStatus"]];
              model.questions        = [NSString stringWithFormat:@"%@",dic[@"Questions"]];
-             model.classTypeName      = [NSString stringWithFormat:@"%@",dic[@"ClassTypeName"]];
+             model.classTypeName      = [NSString stringWithFormat:@"%@",dic[@"ClassTypeName"]]; 
              model.status           = [NSString stringWithFormat:@"%@",dic[@"Status"]];
              model.projectIDofModel = [NSString stringWithFormat:@"%@",dic[@"ProjectId"]];
              if (self.m_projectInfoArr.count == 0)
@@ -420,7 +433,7 @@ static NetManger *manger = nil;
      }];
 }
 
-// 项目详情
+#pragma mark - 项目详情
 - (void)homeGetprojectWithProjectID :(NSString *)ID
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -437,20 +450,22 @@ static NetManger *manger = nil;
      {
          
          /*
-          @property (nonatomic, copy) NSString *applyManName;// 申请人
-          @property (nonatomic, copy) NSString *telephone; // 电话
-          @property (nonatomic, copy) NSString *createTime; // 时间
-          @property (nonatomic, copy) NSString *natureType; // 项目性质
-          @property (nonatomic, copy) NSString *test3; // 投资总额
-          @property (nonatomic, copy) NSString *projectName; // 项目名称
-          @property (nonatomic, copy) NSString *companyType; // 投资种类
-          @property (nonatomic, copy) NSString *categoryType; // 行业
-          @property (nonatomic, copy) NSString *processStatus; // 项目进度标识
-          @property (nonatomic, copy) NSString *questions; // 存在问题
-          @property (nonatomic, copy) NSString *processName; // 项目分类
-          @property (nonatomic, copy) NSString *status; // 项目状态标识
+          @property (nonatomic, copy) NSString *applyManName;     // 申请人
+          @property (nonatomic, copy) NSString *telephone;        // 电话
+          @property (nonatomic, copy) NSString *createTime;       // 时间
+          @property (nonatomic, copy) NSString *natureType;       // 项目性质
+          @property (nonatomic, copy) NSString *test3;            // 投资总额
+          @property (nonatomic, copy) NSString *projectName;      // 项目名称
+          @property (nonatomic, copy) NSString *companyType;      // 项目分类
+          @property (nonatomic, copy) NSString *categoryType;     // 行业
+          @property (nonatomic, copy) NSString *processStatus;    // 项目进度标识
+          @property (nonatomic, copy) NSString *questions;        // 存在问题
+          @property (nonatomic, copy) NSString *classTypeName;    // 投资种类
+          @property (nonatomic, copy) NSString *status;           // 项目状态标识
           */
          NSDictionary *dic = [NSDictionary dictionaryWithDictionary:responseObject[@"data"]];
+         
+         
 //          NSMutableArray *m_datas = [[NSMutableArray alloc] initWithCapacity:0];
 //          for (NSString *str in dic)
 //          {
@@ -464,13 +479,13 @@ static NetManger *manger = nil;
              model.telephone        = [NSString stringWithFormat:@"%@",dic[@"Telephone"]];
              model.createTime       = [NSString stringWithFormat:@"%@",dic[@"CreateTime"]];
              model.natureType       = [NSString stringWithFormat:@"%@",dic[@"NatureTypeName"]];
-             model.test3            = @"暂无";
+             model.money            = [NSString stringWithFormat:@"暂无"];
              model.projectName      = [NSString stringWithFormat:@"%@",dic[@"ProjectName"]];
              model.categoryType     = [NSString stringWithFormat:@"%@",dic[@"CategoryTypeName"]];
              model.companyType      = [NSString stringWithFormat:@"%@",dic[@"CompanyTypeName"]];
              model.processStatus    = [NSString stringWithFormat:@"%@",dic[@"ProcessStatus"]];
              model.questions        = [NSString stringWithFormat:@"%@",dic[@"Questions"]];
-             model.classTypeName      = [NSString stringWithFormat:@"%@",dic[@"ClassTypeName"]];
+             model.classTypeName    = [NSString stringWithFormat:@"%@",dic[@"ClassTypeName"]];
              model.status           = [NSString stringWithFormat:@"%@",dic[@"Status"]];
 
              if (self.m_details.count == 0)
@@ -504,40 +519,12 @@ static NetManger *manger = nil;
 
      }];
 }
-// 保存上报项目
+#pragma mark - 保存上报项目
 - (void)homeProjectsaveWithArray:(NSArray *)array
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 2;
     NSLog(@"%@",array);
-    /*
-     @property (nonatomic, copy) NSString *applyManName;// 申请人
-     @property (nonatomic, copy) NSString *telephone; // 电话
-     @property (nonatomic, copy) NSString *createTime; // 时间
-     @property (nonatomic, copy) NSString *natureType; // 项目性质
-     @property (nonatomic, copy) NSString *test3; // 投资总额
-     @property (nonatomic, copy) NSString *projectName; // 项目名称
-     @property (nonatomic, copy) NSString *companyType; // 投资种类
-     @property (nonatomic, copy) NSString *categoryType; // 行业
-     @property (nonatomic, copy) NSString *processStatus; // 项目进度标识
-     @property (nonatomic, copy) NSString *questions; // 存在问题
-     @property (nonatomic, copy) NSString *processName; // 项目分类
-     @property (nonatomic, copy) NSString *status; // 项目状态标识
-     
-     model.applyManName     = [NSString stringWithFormat:@"%@",dic[@"ApplyManName"]];
-     model.telephone        = [NSString stringWithFormat:@"%@",dic[@"Telephone"]];
-     model.createTime       = [NSString stringWithFormat:@"%@",dic[@"CreateTime"]];
-     model.natureType       = [NSString stringWithFormat:@"%@",dic[@"NatureTypeName"]];
-     model.test3            = @"暂无";
-     model.projectName      = [NSString stringWithFormat:@"%@",dic[@"ProjectName"]];
-     model.categoryType     = [NSString stringWithFormat:@"%@",dic[@"CategoryTypeName"]];
-     model.companyType      = [NSString stringWithFormat:@"%@",dic[@"CompanyTypeName"]];
-     model.processStatus    = [NSString stringWithFormat:@"%@",dic[@"ProcessStatus"]];
-     model.questions        = [NSString stringWithFormat:@"%@",dic[@"Questions"]];
-     model.classTypeName      = [NSString stringWithFormat:@"%@",dic[@"ClassTypeName"]];
-     model.status           = [NSString stringWithFormat:@"%@",dic[@"Status"]];
-
-     */
     NSDictionary *parameters = @{
                                  @"_appid":@"101",
                                  @"_code":self.userID_Code,
@@ -545,20 +532,23 @@ static NetManger *manger = nil;
                                  
                                  @"ProjectId":      array[0], // 项目ID
                                  @"ProjectName":    array[1],// 项目名
-                                 @"ApplyMan":       array[2],
-                                 @"ApplyManName":   array[3], // 申请人
-                                 @"Telephone":      array[4], // 电话
-                                 @"NatureType":     array[5], // 投资种类
-                                 @"ClassType":      array[6],  // 项目性质
-                                 @"CategoryType":   array[7], // 项目分类
-                                 @"CompanyType":    array[8], // 行业
-                                 @"Questions":      array[9], // 存在问题
-                                 @"ApprovalMan":    array[10],
-                                 @"ApprovalManName": array[11], // 同意
-                                 @"CreateTime":     array[12], // 创建时间
-                                 @"CreateUserId":   array[13], //创建人用户ID
-                                 @"Status":         array[14], // 审批状态
-                                 @"ProcessId":      array[15] // 进度状态
+//                                 @"ApplyMan":       array[2],
+                                 @"ApplyManName":   array[2], // 申请人
+                                 @"Telephone":      array[3], // 电话
+                                 @"NatureType":     array[4], // 项目性质
+                                 @"ClassType":      array[5],  // 投资分类
+                                 @"CategoryType":   array[6], // 行业
+                                 @"CompanyType":    array[7], // 项目分类
+                                 @"Questions":      array[8], // 存在问题
+//                                 @"ApprovalMan":    array[10],
+//                                 @"ApprovalManName": array[11], // 同意
+                                 @"CreateTime":     array[9], // 创建时间
+                                 @"CreateUserId":   array[10], //创建人用户ID
+//                                 @"Status":         array[14], // 审批状态
+                                 @"ProcessId":      array[11], // 进度状态
+                                 @"AreaType":      array[12],// 开竣工
+                                 @"IsHard":      array[13],// 攻坚
+                                 @"MoneyType":      array[14]// 投资总额
                                  };
     NSString *url = [NSString stringWithFormat:@"%@project/home/projectsave",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
@@ -570,7 +560,7 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"上报数据失败"];
      }];
 }
-// 修改密码
+#pragma mark - 修改密码
 - (void)accountUpdatepasswordWithOldPassword:(NSString *)oldPw AndNewPassword:(NSString *)newPw
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -597,7 +587,7 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"修改密码失败"];
      }];
 }
-// 重置用户密码
+#pragma mark - 重置用户密码
 - (void)accountResetpassword
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -621,7 +611,7 @@ static NetManger *manger = nil;
      }];
 }
 
-// 获取最新版本
+#pragma mark - 获取最新版本
 
 - (void)systemsetGetlatestversoin
 {
@@ -663,7 +653,7 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"获取数据失败"];
      }];
 }
-// 添加系统反馈
+#pragma mark - 添加系统反馈
 - (void)systemsetAddfeedback
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -686,7 +676,7 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"获取数据失败"];
      }];
 }
-// 获取常用联系人列表
+#pragma mark - 获取常用联系人列表
 - (void)userGetcontactsKeyword:(NSString *)keywork
 {
     if (keywork.length == 0) {
@@ -730,7 +720,7 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"获取数据失败"];
      }];
 }
-// 群发
+#pragma mark - 群发
 - (void)sendmessage
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
@@ -741,9 +731,9 @@ static NetManger *manger = nil;
                                  @"content":@"application/json",
                                  
                                  @"SendUsers": @[@"1",@"2",@"admin"],
-                                 @"Id": @"14",
-                                 @"UserFrom": @"14",
-                                 @"UserTo": @"14",
+                                 @"Id": @"1",
+                                 @"UserFrom": @"1",
+                                 @"UserTo": @"1",
                                  @"CreateTime": [self getDate],
                                  @"DataContent": @"xxxxx"
                                  };
@@ -757,33 +747,30 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"发送失败"];
      }];
 }
-- (void)projectcheck
+#pragma mark - 审批 ProjectId，Number，CheckStatus，CheckCuauses必传
+- (void)projectcheck:(NSString *)ID
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
-    manger.requestSerializer.timeoutInterval = 5;
+    manger.requestSerializer.timeoutInterval = 2;
     NSDictionary *parameters = @{
                                  @"_appid":@"101",
                                  @"_code":self.userID_Code,
                                  @"content":@"application/json",
                                  
-                                 @"Id": @"1",
-                                 @"ProjectId": @"2",
-                                 @"ProcessId": @"3",
-                                 @"ProcessName": @"ios",
-                                 @"Number": @"5",
-                                 @"StructureId": @"6",
-                                 @"StructureName": @"swift",
-                                 @"CheckStatus": @"14",
+                                 @"ProjectId": ID,
+                                 @"Number": @"1",
+                                 @"StructureId": @"2",
+//                                 @"StructureName": @"人力资源",
+                                 @"CheckStatus": @"2",
                                  @"CheckTime": [self getDate],
-                                 @"CheckUserId": @"1",
-                                 @"CheckUserName": @"cong",
                                  @"CheckCuauses": @"good"
                                  };
     NSString *url = [NSString stringWithFormat:@"%@project/home/projectcheck",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
          NSLog(@"项目审查：%@",responseObject);
-         [LCProgressHUD showSuccess:@"数据发送成功"];
+         [LCProgressHUD showSuccess:responseObject[@"msg"]];
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"Projectcheck" object:nil];
      } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
          NSLog(@"error : %@",error);
          [LCProgressHUD showFailure:@"获取数据失败"];
@@ -799,13 +786,11 @@ static NetManger *manger = nil;
                                  @"content":@"application/json",
                                  
                                  @"Id": @"1",
-                                 @"ProjectId": @"2",
+                                 @"ProjectId": @"1",
                                  @"sType": @"3",
                                  @"Remark": @"ios test",
-                                 @"CreateUserId": @"5",
+                                 @"CreateUserId": @"1",
                                  @"CreateUsesrName": @"ios",
-                                 @"CreateTime": @"2016-04-25 09:51:28",
-                                 @"FollowDate": @"2016-04-25 09:51:28"
                                  };
     NSString *url = [NSString stringWithFormat:@"%@project/home/projectfollow",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
@@ -817,6 +802,110 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"获取数据失败"];
      }];
 }
+#pragma mark - 群发消息列表
+- (void)getmessagelist
+{
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+//    manger.requestSerializer.timeoutInterval = 5;
+    NSDictionary *parameters = @{
+                                 @"_appid":@"101",
+                                 @"_code":self.userID_Code,
+                                 @"content":@"application/json",
+                                 
+//                                 @"Keyword": @"14",
+//                                 @"PageIndex": @"2",
+//                                 @"PageSize": @"3"
+                                 };
+    NSString *url = [NSString stringWithFormat:@"%@common/user/getmessagelist",ServerAddressURL];
+    [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
+     {
+         NSLog(@"群发消息列表：%@",responseObject);
+         
+     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+         NSLog(@"error : %@",error);
+         [LCProgressHUD showFailure:@"获取数据失败"];
+     }];
+}
+#pragma mark - 项目进度详情
+- (void)homeGetprojectWithProjectIDs :(NSString *)ID
+{
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+    manger.requestSerializer.timeoutInterval = 2;
+    NSDictionary *parameters = @{
+                                 @"_appid":@"101",
+                                 @"_code":self.userID_Code,
+                                 @"content":@"application/json",
+                                 
+                                 @"Id":ID
+                                 };
+    NSString *url = [NSString stringWithFormat:@"%@project/home/getproject",ServerAddressURL];
+    [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
+     {
+         
+         NSLog(@"%@",responseObject);
+         /*
+          ProjectId	:	2
+          StructureName	:	人力资源
+          CheckTime	:	2016-04-09 10:07:31
+          CheckUserName	:	admin
+          CheckCuauses	:	非常有创意
+          
+          */
+         NSDictionary *dic = responseObject[@"data"];
+         NSArray *datas = dic[@"ProcessList"];
+         [self.m_processArr removeAllObjects];
+         for (NSDictionary *dic in datas) {
+//             NSLog(@"%@",dic[@"StructureName"]);
+             ProjectModel *model = [[ProjectModel alloc] init];
+//             model.processID            = dic[@"ProjectId"];
+             if (![dic[@"ProjectId"] isKindOfClass:[NSNull class]]) {
+                 model.processID     = dic[@"ProjectId"];
+             }
+             else
+             {
+                 model.processID  = @"无";
+             }
+//             model.processStructureName = dic[@"StructureName"];
+             if (![dic[@"StructureName"] isKindOfClass:[NSNull class]]) {
+                 model.processStructureName     = dic[@"StructureName"];
+             }
+             else
+             {
+                 model.processStructureName  = @"无";
+             }
+             
+             if (![dic[@"CheckTime"] isKindOfClass:[NSNull class]]) {
+                 model.processCheckTime     = dic[@"CheckTime"];
+             }
+             else
+             {
+                 model.processCheckTime  = @"无";
+             }
+             
+             model.processCheckUserName = dic[@"CheckUserName"];
+             
+             if (![dic[@"CheckCuauses"] isKindOfClass:[NSNull class]]) {
+                 model.processCheckCuauses  = dic[@"CheckCuauses"];
+             }
+             else
+             {
+                 model.processCheckCuauses  = @"无";
+             }
+             
+             if (self.m_processArr.count == 0) {
+                 self.m_processArr = [[NSMutableArray alloc] initWithCapacity:0];
+             }
+             [self.m_processArr addObject:model];
+         }
+         [LCProgressHUD showSuccess:@"加载成功"];
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"Getprojects" object:nil];
+     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+         NSLog(@"error : %@",error);
+         [LCProgressHUD showFailure:@"获取数据失败"];
+         
+     }];
+}
+
 - (NSString *)getDate
 {
     NSDate *currentDate = [NSDate date];//获取当前时间，日期

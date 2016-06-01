@@ -387,6 +387,7 @@ typedef void (^handler)(NSArray<UIImage *> *selectPhotos);
         if (weakSelf.handler) {
             UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
             weakSelf.handler(@[image]);
+//            NSLog(@"%@",[info objectForKey:UIImagePickerControllerOriginalImage]);
             UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextinfo:), nil);
         }
         [weakSelf hide];

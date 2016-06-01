@@ -13,6 +13,7 @@
 #import "KeyboardToolBar.h"
 #import "NetManger.h"
 #import "ProjectModel.h"
+#import "MJRefresh.h"
 //#import "LCProgressHUD.h"
 @interface ProjectSrachViewController ()
 {
@@ -25,7 +26,10 @@
 @end
 
 @implementation ProjectSrachViewController
-
+// 销毁通知中心
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -33,14 +37,25 @@
     [self registerNib]; //注册Cell
     
     
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        // 进入刷新状态后会自动调用这个block
+    }];
+    
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadNewData方法）
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+    
+    // 马上进入刷新状态
+    [self.tableView.header beginRefreshing];
+    
 }
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    manger= [NetManger shareInstance];
-    manger.isKeyword = NO;
-    [manger loadData:RequestOfGetprojectlist];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"GetprojectlistWithKeyword" object:nil];
+//    manger= [NetManger shareInstance];
+//    manger.isKeyword = NO;
+//    [manger loadData:RequestOfGetprojectlist];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"GetprojectlistWithKeyword" object:nil];
+    [self loadNewData];
 }
 #pragma mark - Btn逻辑
 - (void)seachOn{
@@ -100,6 +115,15 @@
     }
     
 }
+#pragma mark - 页面刷新
+- (void)loadNewData
+{
+    manger= [NetManger shareInstance];
+    manger.isKeyword = NO;
+    [manger loadData:RequestOfGetprojectlist];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:@"GetprojectlistWithKeyword" object:nil];
+    [_tableView.header endRefreshing];
+}
 - (void)reloadData
 {
 //    [LCProgressHUD showLoading:@"正在加载"];    
@@ -129,20 +153,29 @@
         ProjectModel *model = manger.m_projectInfoArr[indexPath.row];
         if ([model.status isEqualToString:@"2"])
         {
-            model.status = @"审批未通过";
-            proSeachCell.stateLabel.textColor = [UIColor redColor];
+            model.status = @"审批中";
         }
         else if ([model.status isEqualToString:@"14"])
         {
-            model.status = @"审批中";
+            model.status = @"审批已通过";
         }
+        else if ([model.status isEqualToString:@"1"])
+        {
+            model.status = @"审批不通过";
+            proSeachCell.stateLabel.textColor = [UIColor redColor];
+        }
+        else if ([model.status isEqualToString:@"0"])
+        {
+            model.status = @"未审批";
+        }
+        
         self.ID = model.projectIDofModel;
         NSLog(@"NetManger *manger %@",self.ID);
         proSeachCell.titleLab.text = model.projectName;
         proSeachCell.nameLab.text = model.applyManName;
         proSeachCell.timeLab.text = model.createTime;
         proSeachCell.stateLabel.text = [NSString stringWithFormat:@"当前状态:%@",model.status] ;
-        proSeachCell.classTypeLab.text = model.classTypeName;
+        proSeachCell.natureTypeLab.text = model.natureType;
         proSeachCell.tag = [self.ID integerValue];
         proSeachCell.selectionStyle = UITableViewCellSelectionStyleNone;
         datas = @[proSeachCell.nameLab.text,model.telephone,proSeachCell.stateLabel.text,proSeachCell.timeLab.text];
@@ -153,14 +186,14 @@
     return proSeachCell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    ProjectSeachTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-
-    ProcessViewController *proVC = [[ProcessViewController alloc] init];
-    proVC.statet = (int)cell.tag;
-    proVC.data = datas;
-//    NSLog(@"cellTag%ld",cell.tag);
-    proVC.title = @"项目进度";
-    [self.navigationController pushViewController:proVC animated:YES];
+//    ProjectSeachTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//
+//    ProcessViewController *proVC = [[ProcessViewController alloc] init];
+//    proVC.statet = (int)cell.tag;
+//    proVC.stateStr = cell.stateLabel.text;
+////    NSLog(@"cellTag%ld",cell.tag);
+//    proVC.title = @"项目进度";
+//    [self.navigationController pushViewController:proVC animated:YES];
 }
 -(void)hideKeyboard
 {

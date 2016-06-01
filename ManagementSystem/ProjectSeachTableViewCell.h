@@ -16,5 +16,5 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *timeLab;
 
-@property (weak, nonatomic) IBOutlet UILabel *classTypeLab;
+@property (weak, nonatomic) IBOutlet UILabel *natureTypeLab;
 @end

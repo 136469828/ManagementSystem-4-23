@@ -27,6 +27,7 @@
     NSString *projectSuggest;
     NSString *projectApplyName;
     int pickerViewValue;
+    NSString *isHard;
 }
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -126,8 +127,19 @@
         if (indexPath.row == 1) // 电话号码
         {
             NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
-            NSString *phone = [user objectForKey:@"userName"];
-            cell.textLabel.text = [NSString stringWithFormat:@"电话号码:\t\t%@",phone];
+            NSString *phone;
+            UILabel *phoneLab= [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2.8, 0, 250, 50)];
+            if ([[user objectForKey:@"userName"] isEqualToString:@"admin"]) {
+                phone = @"18575523716";
+            }
+            else
+            {
+                phone = [user objectForKey:@"userName"];
+            }
+    
+            cell.textLabel.text =@"电话号码:";
+            phoneLab.text = phone;
+            [cell.contentView addSubview:phoneLab];
             [user synchronize];
         }
         if (indexPath.row == 2) // 项目名
@@ -187,17 +199,19 @@
             cell.textLabel.text = @"列入攻坚项目";
             if(isClick)
             {
+                isHard = @"1";
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
             else
             {
+                isHard = @"0";
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
 
         }// 是否列入攻坚项目
         if (indexPath.row == 3) // 项目概况
         {
-            cell.textLabel.text = @"投资总额 | 行业 | 投资种类 | 项目分类";
+            cell.textLabel.text = @"投资总额 | 投资种类 | 行业 | 项目分类";
             cell.textLabel.font = [UIFont systemFontOfSize:15];
             UIImageView *imageV = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth - 55,0, 50, 50)];
             imageV.backgroundColor = [UIColor clearColor];
@@ -327,7 +341,7 @@
     {
         if (indexPath.row == 0)
         {
-            titls = @[@"省",@"市",@"区",@"县",@"镇"];
+            titls = @[@"省",@"市",@"区",@"县",@"镇",@"中央"];
             components = 1;
             pickerViewValue = 1;
             [self _initPickerView];
@@ -363,6 +377,7 @@
     }
     
 }
+
 - (void)keyboaedDidShow:(NSNotification *)notif{
     //        NSLog(@"键盘出现 %@",notif);
 #if 0
@@ -455,7 +470,7 @@
     _labelView = [[UIView alloc] initWithFrame:CGRectMake(0,ScreenHeight - ScreenHeight/2, ScreenWidth, 80)];
     _labelView.backgroundColor = [UIColor whiteColor];
     if (components == 4) {
-        NSArray *titleNams = @[@"投资总额",@"项目分类",@"投资种类",@"项目行业"];
+        NSArray *titleNams = @[@"投资总额",@"项目行业",@"投资种类",@"项目分类"];
         for (int i = 0; i < 4; i++) {
             UILabel *pickerL = [[UILabel alloc] initWithFrame:CGRectMake(20 + (i*ScreenWidth/4),45, ScreenWidth, 40)];
             pickerL.text = titleNams[i];
@@ -562,7 +577,7 @@
         NSInteger selectedFourIndex = [self.pickerView selectedRowInComponent:3];
         //        NSLog(@"%@",[NSString stringWithFormat:@"%@-%@-%@-%@",titls[selectedOneIndex],nams[selectedTwoIndex],nams[selectedThreeIndex],nams[selectedFourIndex]]);
         UILabel *infoL = (UILabel *)[self viewWithTag:2001];
-        infoL.text = [NSString stringWithFormat:@"%@  |  %@  |  %@  |  %@",titls[selectedOneIndex],totals[selectedTwoIndex],classifys[selectedThreeIndex],nams[selectedFourIndex]];
+        infoL.text = [NSString stringWithFormat:@"%@|%@|%@|%@",titls[selectedOneIndex],totals[selectedTwoIndex],classifys[selectedThreeIndex],nams[selectedFourIndex]];
         NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
         [user setObject:infoL.text forKey:@"i3"];
         [user synchronize];
@@ -614,67 +629,96 @@
 #pragma mark - 判定申报单是否缺漏
 - (BOOL)cheakTheForm
 {
-    if
-        (projectName.length      != 0 &&
-        projectProgress.length   != 0 &&
-         projectApplyName        !=0)
+    if(projectName.length       != 0 &&
+       projectProgress.length   != 0 &&
+       projectApplyName         !=0)
+
     {
+        NSDictionary *projectDic = @{@"省": @"1101",
+                                     @"市": @"1102",
+                                     @"县": @"1103",
+                                     @"区": @"1104",
+                                     @"镇": @"1105",
+                                     @"中央": @"1106",
+                                     @"能源": @"1201",
+                                     @"火电": @"1202",
+                                     @"国企": @"1301",
+                                     @"央企": @"1302",
+                                     @"省重点": @"1401",
+                                     @"市重点": @"1402",
+                                     @"计划": @"1501",
+                                     @"实际": @"1502",
+                                     @"否": @"1603",
+                                     @"市": @"1601",
+                                     @"区": @"1602"};
         NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
         [user synchronize];
-        /*
-         "ProjectId": 1, 项目ID
-         "ProjectName": "sample string 2", 项目名
-         "ApplyMan": 3,
-         "ApplyManName": "sample string 4", 申请人
-         "Telephone": "sample string 5", 电话
-         "NatureType": 6, 项目性质
-         "ClassType": 7, 项目分类
-         "CategoryType": 8, 投资种类
-         "CompanyType": 9,  行业
-         "Questions": "sample string 10", 发现问题
-         "ApprovalMan": 1,
-         "ApprovalManName": "sample string 11", 审批人
-         "CreateTime": "2016-04-22 16:04:32", 申请时间
-         "CreateUserId": 13, 创建人ID
-         "Status": 14, 状态
-         "ProcessId": 15 进度ID
-         
-         */
         NSDate *currentDate = [NSDate date];//获取当前时间，日期
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"YYYY-MM-dd HH:mm "];
         NSString *dateString = [dateFormatter stringFromDate:currentDate];
         NSArray *array = [[user objectForKey:@"i3"] componentsSeparatedByString:@"|"];
-        NSLog(@"array:%@",array);
+        //        NSLog(@"array:%@",array);
         NSMutableArray *m_StrArr;
         for (NSString *str in array)
         {
-            NSLog(@"%@",[str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
+            //            NSLog(@"-%@-",[str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
             if (m_StrArr.count == 0)
             {
                 m_StrArr = [[NSMutableArray alloc] initWithCapacity:0];
             }
-            [m_StrArr addObject:str];
+            NSLog(@"%@ %@",str,projectDic[str]);
+            [m_StrArr addObject:projectDic[str]];
         }
-        NSLog(@"%@",m_StrArr);
-        NSArray *arr = @[@"0",
-                         projectName,
-                         @"3",
-                         projectApplyName,
-                         @"18575523716",
-                         [user objectForKey:@"i1"],
-                         m_StrArr[1],
-                         m_StrArr[2],
-                         m_StrArr[3],
-                         projectQuestion,
-                         @"1",
-                         @"admin",
-                         dateString,
-                         @"13",
-                         @"14",
-                         projectProgress];
-        
+        //        NSLog(@"%@",m_StrArr);
+        /*
+         @"_appid":@"101",
+         @"_code":self.userID_Code,
+         @"content":@"application/json",
+         
+         @"ProjectId":      array[0], // 项目ID
+         @"ProjectName":    array[1],// 项目名
+         @"ApplyMan":       array[2],X
+         @"ApplyManName":   array[3], // 申请人
+         @"Telephone":      array[4], // 电话
+         @"NatureType":     array[5], // 项目性质
+         @"ClassType":      array[6],  // 投资种类
+         @"CategoryType":   array[7], // 行业
+         @"CompanyType":    array[8], // 项目分类
+         @"Questions":      array[9], // 存在问题
+         @"ApprovalMan":    array[10],X
+         @"ApprovalManName": array[11], // 同意 X
+         @"CreateTime":     array[12], // 创建时间
+         @"CreateUserId":   array[13], //创建人用户ID
+       //@"Status":         array[14], // 审批状态
+         @"ProcessId":      array[15] // 进度状态
+         
+         */
+        NSString *phonestr;
+        if ([[user objectForKey:@"userName"] isEqualToString:@"admin"]) {
+            phonestr = @"18575523716";
+        }
+        else
+        {
+            phonestr = [user objectForKey:@"userName"];
+        }
         NetManger *manger = [NetManger shareInstance];
+        NSArray *arr = @[@"5",
+                         projectName,
+                         projectApplyName,
+                         phonestr,
+                         projectDic[[user objectForKey:@"i1"]],
+                         m_StrArr[1], // 投资种类 国企
+                         m_StrArr[2], // 行业 能源
+                         m_StrArr[3], // 省重点
+                         projectQuestion,
+                         dateString,
+                         manger.userId,
+                         projectProgress,
+                         projectDic[[user objectForKey:@"i2"]],
+                         isHard,
+                         m_StrArr[0],];    //投资总额
+
         manger.formArray = arr;
         [manger loadData:RequestOfProjectsave];
         return YES;

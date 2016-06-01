@@ -11,6 +11,7 @@
 @interface CommentTableViewCell : UITableViewCell<UITextViewDelegate>
 @property (weak, nonatomic) IBOutlet UITextView *textViewComment;
 @property (weak, nonatomic) IBOutlet UIButton *agreeBtn;
-
 @property (weak, nonatomic) IBOutlet UIButton *refuseBtn;
+
+@property (nonatomic, copy) NSString *ID;
 @end
