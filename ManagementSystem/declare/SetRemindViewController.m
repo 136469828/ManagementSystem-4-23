@@ -9,7 +9,6 @@
 #import "SetRemindViewController.h"
 //#import "RemindViewController.h"
 #import "SetRemenberV.h"
-
 @interface SetRemindViewController ()
 
 @end
@@ -26,7 +25,6 @@
 }
 
 - (void)pushRemindVC{
-
     [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

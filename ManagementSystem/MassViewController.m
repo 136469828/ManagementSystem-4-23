@@ -26,14 +26,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+
+}
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     manger = [NetManger shareInstance];
-    manger.channelID = @"1002";
-    [manger loadData:RequestOfGetarticlelist];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getarticlelist" object:nil];
+    //    manger.channelID = @"1001";
+    [manger loadData:RequestOfgetmessagelist];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"getmessagelist" object:nil];
     [self setTableView];
     [self registerNib];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -62,18 +66,22 @@
     seachTextField.layer.masksToBounds=YES;
     
     [hearView addSubview:seachTextField];
-    
+   
+    if ([manger.AppRoleType isEqualToString:@"2"])
+    {
+        UIButton *addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [addBtn setImage:[UIImage imageNamed:@"contact_add"] forState:UIControlStateNormal];
+        addBtn.frame = CGRectMake(SCREEN_WIDTH - 50, -5, 45, 45);
+        [addBtn addTarget:self action:@selector(addMassAction) forControlEvents:UIControlEventTouchDown];
+        [hearView addSubview:addBtn];
+    }
     UIButton *seachBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [seachBtn setImage:[UIImage imageNamed:@"seachBtn"] forState:UIControlStateNormal];
     seachBtn.frame = CGRectMake(SCREEN_WIDTH - 100, 0, 35, 35);
     //    [seachBtn addTarget:seachTextField action:@selector(seachOnSeach) forControlEvents:UIControlEventTouchDown];
     [hearView addSubview:seachBtn];
     
-    UIButton *addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [addBtn setImage:[UIImage imageNamed:@"contact_add"] forState:UIControlStateNormal];
-    addBtn.frame = CGRectMake(SCREEN_WIDTH - 50, -5, 45, 45);
-    [addBtn addTarget:self action:@selector(addMassAction) forControlEvents:UIControlEventTouchDown];
-    [hearView addSubview:addBtn];
+    
     
     
     
@@ -105,30 +113,17 @@
 }
 #pragma mark - tableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 1;
+//    NSLog(@"%ld",manger.m_messages.count);
+    return manger.m_messages.count;
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-     MassTableViewCell*massCell = [_tableView dequeueReusableCellWithIdentifier:@"MassTableViewCell"];
-    NSString *contentStrData = @"无";
-    NSString *contentStr = [NSString stringWithFormat:@"内容：%@",contentStrData];
-    
-    if (manger.m_listArr.count != 0) {
-        ProjectModel *model = manger.m_listArr[2];
-        contentStrData = model.summary;
-        contentStr = [NSString stringWithFormat:@"内容：%@",contentStrData];
-        massCell.contentLabel.text = contentStr;
-        massCell.titleLab.text = model.title;
-        massCell.nameLab.text = model.author;
-        massCell.timeLab.text = model.listCreateDate;
-    }
-    else
-    {
-        massCell.contentLabel.text = contentStr;
-        massCell.nameLab.text = @"无";
-        massCell.titleLab.text = @"无";
-    }
-    
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MassTableViewCell*massCell = [_tableView dequeueReusableCellWithIdentifier:@"MassTableViewCell"];
+    ProjectModel *model = manger.m_messages[indexPath.row];
+    massCell.contentLabel.text = model.messageContext;
+    massCell.titleLab.hidden = YES;
+    massCell.nameLab.text = model.messageeName;
+    massCell.timeLab.text = model.messageTime;
     massCell.selectionStyle = UITableViewCellSelectionStyleNone;
     return massCell;
 }

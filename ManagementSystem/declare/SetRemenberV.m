@@ -19,6 +19,7 @@
     NSArray *nams;
     NSArray *totals;
     NSArray *classifys;
+    NSArray *projectImgs;
     NSInteger components;
     BOOL isClick;
     NSString *projectName;
@@ -53,7 +54,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboaedDidShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboaedDidappear:) name:UIKeyboardWillHideNotification object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(grtImgs:) name:@"notificationimgs" object:nil];
     UITapGestureRecognizer *tableViewGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(commentTableViewTouchInSide)];
     tableViewGesture.numberOfTapsRequired = 1;
     tableViewGesture.cancelsTouchesInView = NO;
@@ -377,7 +378,10 @@
     }
     
 }
-
+- (void)grtImgs:(NSNotification *)notif
+{
+    projectImgs = notif.object;
+}
 - (void)keyboaedDidShow:(NSNotification *)notif{
     //        NSLog(@"键盘出现 %@",notif);
 #if 0
@@ -619,19 +623,36 @@
     }
     else
     {
-        // 跳转到我的项目VC里
-        SubMyViewController *seachVC = [[SubMyViewController alloc] init];
-        [[SetRemindViewController viewController:self].navigationController pushViewController:seachVC animated:YES];
+        [[self viewController].navigationController popViewControllerAnimated:YES];
     }
     NSLog(@"ClickOn");
 
 }
+- (UIViewController *)viewController {
+    
+    UIResponder *nextResponder = [self nextResponder]; //获取当前uiview的下一个事件响应者
+    
+    do {
+        if ([nextResponder isKindOfClass:[UIViewController class]]) {
+            //如果当前的事件响应者具备push方法,也就是属于
+            return (UIViewController *)nextResponder; //UIViewController,返回UIViewController
+        }
+        nextResponder = [nextResponder nextResponder];//否则一直寻找下一个响应者
+    } while (nextResponder);
+    
+    return nil;
+}
 #pragma mark - 判定申报单是否缺漏
 - (BOOL)cheakTheForm
 {
+    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+    NSString *starTime = [user objectForKey:@"starTime"];
+    NSString *finshTime = [user objectForKey:@"finshTime"];
     if(projectName.length       != 0 &&
        projectProgress.length   != 0 &&
-       projectApplyName         !=0)
+       projectApplyName         !=0 &&
+       starTime.length !=0&&
+       finshTime.length != 0)
 
     {
         NSDictionary *projectDic = @{@"省": @"1101",
@@ -651,18 +672,16 @@
                                      @"否": @"1603",
                                      @"市": @"1601",
                                      @"区": @"1602"};
-        NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
         [user synchronize];
         NSDate *currentDate = [NSDate date];//获取当前时间，日期
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"YYYY-MM-dd HH:mm "];
+        [dateFormatter setDateFormat:@"YYYY/MM/dd"];
         NSString *dateString = [dateFormatter stringFromDate:currentDate];
         NSArray *array = [[user objectForKey:@"i3"] componentsSeparatedByString:@"|"];
         //        NSLog(@"array:%@",array);
         NSMutableArray *m_StrArr;
         for (NSString *str in array)
         {
-            //            NSLog(@"-%@-",[str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
             if (m_StrArr.count == 0)
             {
                 m_StrArr = [[NSMutableArray alloc] initWithCapacity:0];
@@ -670,30 +689,7 @@
             NSLog(@"%@ %@",str,projectDic[str]);
             [m_StrArr addObject:projectDic[str]];
         }
-        //        NSLog(@"%@",m_StrArr);
-        /*
-         @"_appid":@"101",
-         @"_code":self.userID_Code,
-         @"content":@"application/json",
-         
-         @"ProjectId":      array[0], // 项目ID
-         @"ProjectName":    array[1],// 项目名
-         @"ApplyMan":       array[2],X
-         @"ApplyManName":   array[3], // 申请人
-         @"Telephone":      array[4], // 电话
-         @"NatureType":     array[5], // 项目性质
-         @"ClassType":      array[6],  // 投资种类
-         @"CategoryType":   array[7], // 行业
-         @"CompanyType":    array[8], // 项目分类
-         @"Questions":      array[9], // 存在问题
-         @"ApprovalMan":    array[10],X
-         @"ApprovalManName": array[11], // 同意 X
-         @"CreateTime":     array[12], // 创建时间
-         @"CreateUserId":   array[13], //创建人用户ID
-       //@"Status":         array[14], // 审批状态
-         @"ProcessId":      array[15] // 进度状态
-         
-         */
+        
         NSString *phonestr;
         if ([[user objectForKey:@"userName"] isEqualToString:@"admin"]) {
             phonestr = @"18575523716";
@@ -702,6 +698,8 @@
         {
             phonestr = [user objectForKey:@"userName"];
         }
+//        NSLog(@"%@ %@",starTime,finshTime);
+        
         NetManger *manger = [NetManger shareInstance];
         NSArray *arr = @[@"5",
                          projectName,
@@ -717,10 +715,16 @@
                          projectProgress,
                          projectDic[[user objectForKey:@"i2"]],
                          isHard,
-                         m_StrArr[0],];    //投资总额
+                         m_StrArr[0],
+                         starTime,
+                         finshTime
+                         ];    //投资总额
 
         manger.formArray = arr;
+        manger.projectImgs = projectImgs;
         [manger loadData:RequestOfProjectsave];
+        [user removeObjectForKey:@"starTime"];
+        [user removeObjectForKey:@"finshTime"];
         return YES;
     }
     

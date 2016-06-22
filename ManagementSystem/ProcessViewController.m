@@ -137,16 +137,7 @@
 -(void)hideKeyboard
 {
     [[[UIApplication sharedApplication] keyWindow] endEditing:YES];//关闭键盘
-    
-    //    [UIView beginAnimations:nil context:nil];
-    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    //    [UIView setAnimationDelay:0.35];
-    //
-    //    [UIView setAnimationDelegate:self];
-    //
-    //    _tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    //
-    //    [UIView commitAnimations];
+
 }
 #pragma mark - btnAction
 - (void)pushProject{

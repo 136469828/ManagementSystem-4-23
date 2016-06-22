@@ -25,6 +25,8 @@
     NetManger *manger;
     BOOL isClick;
 }
+@property (nonatomic ,strong) NSMutableArray *m_fansListsArray;
+@property (nonatomic, strong) NSMutableArray *m_dateArray;
 @end
 
 @implementation ChoseLinkManViewController
@@ -112,7 +114,6 @@
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     ContactsTableViewCell *contactsCell = [_tableView dequeueReusableCellWithIdentifier:@"ContactsTableViewCell"];
-    if (manger.m_getcontacts.count != 0) {
         if (m_nameDatas.count == 0) {
             m_nameDatas = [[NSMutableArray alloc] initWithCapacity:0];
         }
@@ -132,29 +133,11 @@
         
         contactsCell.telLab.text = model.linkMobile;
         telStr = contactsCell.telLab.text;
-        NSLog(@"linkID%@",model.linkID);
+
         [m_nameDatas addObject:nameStr];
         [m_telDatas addObject:telStr];
         [m_phoneDatas addObject:phoneStr];
-        
-    }
-    else
-    {
-        contactsCell.nameLab.text = @"梁健聪";
-        nameStr = contactsCell.nameLab.text;
-        contactsCell.zhiwuLab.text = @"iOS开发工程师";
-        contactsCell.phoneLab.text = @"18575523716";
-        contactsCell.telLab.text = @"无";
-    }
 
-//    if(isClick)
-//    {
-//        contactsCell.accessoryType = UITableViewCellAccessoryCheckmark;
-//    }
-//    else
-//    {
-//        contactsCell.accessoryType = UITableViewCellAccessoryNone;
-//    }
     contactsCell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return contactsCell;
@@ -166,25 +149,9 @@
 //    NSLog(@"%@",m_nameDatas);
     tel = m_telDatas[indexPath.row];
     phone = m_phoneDatas[indexPath.row];
-    isClick = !isClick;
+//    isClick = !isClick;
     ContactsTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if ([manger.m_getcontacts containsObject:[manger.m_getcontacts objectAtIndex:indexPath.row]]) {
-//        isClick = !isClick;
-        if (isClick)
-        {
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        }
-        else
-        {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
-        
-    }
-    else
-    {
-        
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
+    [cell rowSelected];
     [self.tableView reloadData];
 }
 
@@ -192,16 +159,7 @@
 -(void)hideKeyboard
 {
     [[[UIApplication sharedApplication] keyWindow] endEditing:YES];//关闭键盘
-    
-    //    [UIView beginAnimations:nil context:nil];
-    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    //    [UIView setAnimationDelay:0.35];
-    //
-    //    [UIView setAnimationDelegate:self];
-    //
-    //    _tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    //
-    //    [UIView commitAnimations];
+
 }
 #pragma mark - Btn逻辑
 - (void)seachOn{
@@ -210,18 +168,8 @@
 }
 - (void)dismissVC
 {
-
     [self.navigationController popViewControllerAnimated:YES];
-    //    [self presentViewController:second animated:YES completion:nil];
-//    
-//    second.block = ^(NSArray *arr){
-//        
-//        NSLog(@"%@",arr);
-//        //        count =  (int)arr.count;
-//        count ++;
-//        [self.tableView reloadData];
-//        
-//    };
+
 }
 
 @end

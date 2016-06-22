@@ -7,17 +7,34 @@
 //
 
 #import "ContactsTableViewCell.h"
-
+#import "FansListsModel.h"
 @implementation ContactsTableViewCell
 
-- (void)awakeFromNib {
-    // Initialization code
+- (void)rowSelected
+{
+    self.m_imageBtn.selected = !self.m_imageBtn.isSelected;
+    [self.m_imageBtn setBackgroundImage:[UIImage imageNamed:@"score_icon_select.png"] forState:UIControlStateSelected];
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (void)setM_model:(FansListsModel *)m_model
+{
+    _m_model = m_model;
+    
+//    self.m_label.text = _m_model.m_nick;
 }
 
+
++ (instancetype)selectedCell:(UITableView *)tableView
+{
+    static NSString *ID = @"ContactsTableViewCell";
+    
+    ContactsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    
+    if (cell == nil)
+    {
+        cell = [[[NSBundle mainBundle] loadNibNamed:@"ContactsTableViewCell" owner:self options:nil] firstObject];
+    }
+    
+    return cell;
+}
 @end

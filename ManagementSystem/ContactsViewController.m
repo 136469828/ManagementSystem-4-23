@@ -61,7 +61,6 @@
 #pragma mark - 页面刷新
 - (void)loadNewData
 {
-    manger = [NetManger shareInstance];
     manger.keyword = @"";
     [manger loadData:RequestOfuserGetcontacts];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getcontacts" object:nil];
@@ -131,46 +130,28 @@
 #pragma mark - tableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
-    return manger.m_getcontacts.count +count;
+    return manger.m_getcontacts.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     ContactsTableViewCell *contactsCell = [_tableView dequeueReusableCellWithIdentifier:@"ContactsTableViewCell"];
-    if (manger.m_getcontacts.count != 0) {
-        if (m_nameDatas.count == 0) {
-            m_nameDatas = [[NSMutableArray alloc] initWithCapacity:0];
-        }
-        if (m_phoneDatas.count == 0) {
-            m_phoneDatas = [[NSMutableArray alloc] initWithCapacity:0];
-        }
-        if (m_telDatas.count == 0) {
-            m_telDatas = [[NSMutableArray alloc] initWithCapacity:0];
-        }
-        ProjectModel *model = manger.m_getcontacts[indexPath.row];
-        contactsCell.nameLab.text = model.linkManName;
-        nameStr = contactsCell.nameLab.text;
-        
-        contactsCell.zhiwuLab.text = model.zhiWuName;
-        contactsCell.phoneLab.text = model.linkPhone;
-        phoneStr = contactsCell.phoneLab.text;
-        
-        contactsCell.telLab.text = model.linkMobile;
-        telStr = contactsCell.telLab.text;
-        [m_nameDatas addObject:nameStr];
-        [m_telDatas addObject:telStr];
-        [m_phoneDatas addObject:phoneStr];
 
-    }
-    else
-    {
-        contactsCell.nameLab.text = @"无";
-        nameStr = contactsCell.nameLab.text;
-        contactsCell.zhiwuLab.text = @"无";
-        contactsCell.phoneLab.text = @"无";
-        contactsCell.telLab.text = @"无";
-    }
+    ProjectModel *model = manger.m_getcontacts[indexPath.row];
+    contactsCell.nameLab.text = model.linkManName;
+    nameStr = contactsCell.nameLab.text;
+    
+    contactsCell.zhiwuLab.text = model.zhiWuName;
+    
+    contactsCell.phoneLab.text = model.linkPhone;
+    phoneStr = contactsCell.phoneLab.text;
+    
+    contactsCell.telLab.text = model.linkMobile;
+    telStr = contactsCell.telLab.text;
+    
+    [m_nameDatas addObject:nameStr];
+    [m_telDatas addObject:telStr];
+    [m_phoneDatas addObject:phoneStr];
     
     contactsCell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
     return contactsCell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{

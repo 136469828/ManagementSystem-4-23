@@ -54,7 +54,7 @@
 - (void)loadNewData
 {
     manger = [NetManger shareInstance];
-    manger.channelID = @"1002";
+    manger.channelID = @"1003";
     [manger loadData:RequestOfGetarticlelist];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"Getarticlelist" object:nil];
     [_normalTableView.header endRefreshing];
@@ -88,7 +88,7 @@
 #pragma mark - tableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 
-    return 1;
+    return manger.m_listArr.count;
 
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -98,38 +98,17 @@
     normalCell.contentLabel.text = contentStr;
     normalCell.titleLab.text = @"无";
     normalCell.nameLab.text = @"无";
-    if (manger.m_listArr.count != 0) {
-        switch (self.tagChanne) {
-            case 1000:
-            {
-                ProjectModel *model = manger.m_listArr[1];
-                contentStrData = model.summary;
-                contentStr = [NSString stringWithFormat:@"内容：%@",contentStrData];
-                normalCell.contentLabel.text = contentStr;
-                normalCell.titleLab.text = model.title;
-                normalCell.nameLab.text = model.author;
-                normalCell.timeLab.text = model.listCreateDate;
-            }
-                break;
-            case 1001:
-            {
-                ProjectModel *model = manger.m_listArr[0];
-                contentStrData = model.summary;
-                contentStr = [NSString stringWithFormat:@"内容：%@",contentStrData];
-                normalCell.contentLabel.text = contentStr;
-                normalCell.titleLab.text = model.title;
-                normalCell.nameLab.text = model.author;
-                normalCell.timeLab.text = model.listCreateDate;
-            }
-                break;
-                
-            default:
-                break;
-        }
-        
+    if (manger.m_listArr.count != 0)
+    {
+        ProjectModel *model = manger.m_listArr[indexPath.row];
+        contentStrData = model.summary;
+        contentStr = [NSString stringWithFormat:@"内容：%@",contentStrData];
+        normalCell.contentLabel.text = contentStr;
+        normalCell.titleLab.text = model.title;
+        normalCell.nameLab.text = model.author;
+        normalCell.timeLab.text = model.listCreateDate;
+
     }
-    
-    
     normalCell.selectionStyle = UITableViewCellSelectionStyleNone;
     return normalCell;
 }

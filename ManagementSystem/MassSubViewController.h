@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *massLabel;
 @property (weak, nonatomic) IBOutlet UITextView *contentTextview;
 
+@property (weak, nonatomic) IBOutlet UITextField *titleTF;
 
 @end

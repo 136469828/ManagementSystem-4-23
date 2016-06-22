@@ -8,7 +8,7 @@
 
 #import "PhotoTableViewCell.h"
 #import "SetRemindViewController.h"
-
+#import "DateViewController.h"
 #import "ZLPhotoActionSheet.h"
 @implementation PhotoTableViewCell
 {
@@ -19,20 +19,10 @@
 - (void)awakeFromNib {
     // Initialization code
     self.ptotoOne.image = [UIImage imageNamed:@"show_photo"];
-    self.photoTwo.image = [UIImage imageNamed:@"show_photo"];
-    self.photoThree.image = [UIImage imageNamed:@"show_photo"];
-    [self.nameBtn setImage:[UIImage imageNamed:@"contact_add"] forState:UIControlStateNormal];
-    [self.CCnameBtn setImage:[UIImage imageNamed:@"contact_add"] forState:UIControlStateNormal];
-    self.CopyCTF.delegate = self;
-    self.ApproverTF.delegate = self;
-    
-    self.CopyCTF.tag = 999;
-    self.ApproverTF.tag = 998;
-//    self.visitPhoto.tag = 997;
-     viewCtr = [[SetRemindViewController alloc] init];
-    [self.visitPhoto addTarget:self action:@selector(clickOn:) forControlEvents:UIControlEventTouchDown];
+    [self.starTimeBtn addTarget:self action:@selector(StarTimeBtn:) forControlEvents:UIControlEventTouchDown];
+    [self.finshTimeBtn addTarget:self action:@selector(finshTimeBtn:) forControlEvents:UIControlEventTouchDown];
     [self.openCrama addTarget:self action:@selector(visitCamers) forControlEvents:UIControlEventTouchDown];
-    
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTime:) name:@"date" object:nil];
     // 设置图片选择器
     actionSheet = [[ZLPhotoActionSheet alloc] init];
     //设置照片最大选择数
@@ -42,6 +32,10 @@
 
     
 }
+//- (void)reloadTime:(NSNotification *)obj
+//{
+//    NSLog(@"时间%@",obj.object);
+//}
 // 访问摄像头
 - (void)visitCamers{
 #pragma mark - 相机相册选择预览集合
@@ -50,14 +44,39 @@
         [weakSelf.ptotoOne.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
         
         CGFloat width = [UIScreen mainScreen].bounds.size.width/6-2;
-        for (int i = 0; i < selectPhotos.count; i++) {
+//        for (int i = 0; i < selectPhotos.count; i++) {
+//            UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(i%5*(width+2), i/5*(width+2), width, width)];
+//            // 将data上传到服务器
+//            NSData *data=UIImageJPEGRepresentation(selectPhotos[i], 1.0);
+////            NSLog(@"imageData%@",data);
+//            imgView.image = selectPhotos[i];
+//            [weakSelf.ptotoOne addSubview:imgView];
+//        }
+        NSString *strImg = nil;
+        NSLog(@"开始处理图片");
+        [self.array removeAllObjects];
+        for (int i = 0; i < selectPhotos.count; i++)
+        {
             UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(i%5*(width+2), i/5*(width+2), width, width)];
-            // 将data上传到服务器
-            NSData *data=UIImageJPEGRepresentation(selectPhotos[i], 1.0);
-//            NSLog(@"imageData%@",data);
             imgView.image = selectPhotos[i];
+            //            UIImage *croppedImg = [self resizeImage:imgView.image withWidth:101 withHeight:101];
+            //            UIImage *croppedImg = nil;
+            //            CGRect cropRect = CGRectMake(0 ,0,131,131); // set frame as you need
+            //            croppedImg = [self croppIngimageByImageName:imgView.image toRect:cropRect];
+            
+            if (self.array.count == 0)
+            {
+                self.array = [[NSMutableArray alloc] initWithCapacity:0];
+            }
+            //            imgdata = [self image2DataURL:imgView.image];
+            strImg = [self image2DataURL:imgView.image];
+            [self.array addObject:strImg];
+            //            NSLog(@"%@",strImg);
             [weakSelf.ptotoOne addSubview:imgView];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"notificationimgs" object:self.array];
         }
+        NSLog(@"结束处理图片");
+
     }];
 
 }
@@ -142,12 +161,71 @@
 //    }];
     
 }
-- (void)closeView{
-    [self.closeV removeFromSuperview];
-    [self.superview endEditing:YES];
+
+- (void)StarTimeBtn:(UIButton *)sender
+{
+    NSLog(@"选择开始时间");
+    DateViewController *subvc = [[DateViewController alloc] init];
+    subvc.title = @"选择日期";
+    [[self viewController].navigationController pushViewController:subvc animated:YES];
+    subvc.block = ^(NSString *str)
+    {
+//        NSLog(@"时间:%@",str);
+        NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+        [sender setTitle:str forState:UIControlStateNormal];
+        [user setObject:sender.titleLabel.text forKey:@"starTime"];
+    };
 }
-- (IBAction)addNameBtn:(UIButton *)sender {
+
+
+- (void)finshTimeBtn:(UIButton *)sender
+{
+    NSLog(@"选择结束时间");
+    DateViewController *subvc = [[DateViewController alloc] init];
+    subvc.title = @"选择日期";
+    subvc.block = ^(NSString *str)
+    {
+//        NSLog(@"时间:%@",str);
+        NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+        [sender setTitle:str forState:UIControlStateNormal];
+        [user setObject:sender.titleLabel.text forKey:@"finshTime"];
+    };
+    [[self viewController].navigationController pushViewController:subvc animated:YES];
 }
-- (IBAction)addCCnameBtn:(UIButton *)sender {
+- (UIViewController *)viewController {
+    
+    UIResponder *nextResponder = [self nextResponder]; //获取当前uiview的下一个事件响应者
+    
+    do {
+        if ([nextResponder isKindOfClass:[UIViewController class]]) {
+            //如果当前的事件响应者具备push方法,也就是属于
+            return (UIViewController *)nextResponder; //UIViewController,返回UIViewController
+        }
+        nextResponder = [nextResponder nextResponder];//否则一直寻找下一个响应者
+    } while (nextResponder);
+    
+    return nil;
+}
+
+- (UIImage *)croppIngimageByImageName:(UIImage *)imageToCrop toRect:(CGRect)rect
+{
+    //CGRect CropRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height+15);
+    
+    CGImageRef imageRef = CGImageCreateWithImageInRect([imageToCrop CGImage], rect);
+    UIImage *cropped = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    
+    return cropped;
+}
+
+// 图片转64
+
+- (NSString *) image2DataURL: (UIImage *) image
+{
+    NSLog(@"开始");
+    NSData *data = UIImageJPEGRepresentation(image, 0.5);
+    NSString *pictureDataString=[data base64Encoding];
+    NSLog(@"结束");
+    return pictureDataString;
 }
 @end

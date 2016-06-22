@@ -8,8 +8,13 @@
 
 #import "MassSubViewController.h"
 #import "ChoseLinkManViewController.h"
-@interface MassSubViewController ()<UITextViewDelegate>
+#import "LinkManViewController.h"
+#import "YXJFansListsModel.h"
+#import "NetManger.h"
 
+@interface MassSubViewController ()<UITextViewDelegate>
+@property (nonatomic, strong) NSMutableArray *linkManDatas;
+@property (nonatomic, strong) NSMutableArray *linkManIDs;
 @end
 
 @implementation MassSubViewController
@@ -17,7 +22,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.massLabel.text = @"马化腾，李彦宏，马云，雷军，王自如，黄章，董明珠，刘强东";
+    self.massLabel.text = @" ";
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStylePlain target:self action:@selector(rightBtnAction)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
@@ -50,12 +55,43 @@
 */
 - (void)rightBtnAction{
     NSLog(@"发送");
+    NetManger *manger = [NetManger shareInstance];
+    manger.linkMans = self.self.linkManIDs;
+    manger.sendMeassContext = self.contentTextview.text;
+    manger.sendMeassTitle = self.titleTF.text;
+    [manger loadData:RequestOfsendmessage];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
 }
-- (IBAction)choseLinkMan:(UIButton *)sender {
-    ChoseLinkManViewController *choseVC = [[ChoseLinkManViewController alloc] init];
-    [self.navigationController pushViewController:choseVC animated:YES];
+- (IBAction)choseLinkMan:(UIButton *)sender
+{
+//    ChoseLinkManViewController *choseVC = [[ChoseLinkManViewController alloc] init];
+//    [self.navigationController pushViewController:choseVC animated:YES];
+    LinkManViewController *sub = [[LinkManViewController alloc] init];
+    sub.title = @"选择好友";
+    [self.navigationController pushViewController:sub animated:YES];
+    sub.block = ^(NSArray *arr,NSInteger count)
+    {
+        [self.linkManDatas removeAllObjects];
+        [self.linkManIDs removeAllObjects];
+        for (int i = 0; i<count; i++) {
+             YXJFansListsModel *model = arr[i];
+             NSLog(@"%@ %@",model.linkID,model.m_nick);
+            if (self.linkManDatas.count == 0)
+            {
+                self.linkManDatas = [[NSMutableArray alloc] initWithCapacity:0];
+            }
+            [self.linkManDatas addObject: model.m_nick];
+            if (self.linkManIDs.count == 0)
+            {
+                self.linkManIDs = [[NSMutableArray alloc] initWithCapacity:0];
+            }
+            [self.linkManIDs addObject: model.linkID];
+        }
+        NSString *string = [self.linkManDatas componentsJoinedByString:@","];
+        self.massLabel.text = string;
+    };
 }
 @end

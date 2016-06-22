@@ -72,7 +72,7 @@ static NetManger *manger = nil;
             break;
         case RequestOfProjectsave:
         {
-            [self homeProjectsaveWithArray:self.formArray];
+            [self homeProjectsaveWithArray:self.formArray ImgArr:self.projectImgs];
         }
             break;
         case RequestOfUpdatepassword:
@@ -87,11 +87,6 @@ static NetManger *manger = nil;
             break;
         case RequestOfGetlatestversoin:
         {
-
-//            [self projectcheck];
-//            [self projectfollow];
-//            [self sendmessage];
-//            [self getmessagelist];
             [self systemsetGetlatestversoin];
         }
             break;
@@ -115,11 +110,32 @@ static NetManger *manger = nil;
             [self projectcheck:self.projectID];
         }
             break;
+        case RequestOfgetmessagelist:
+        {
+            [self getmessagelist];
+        }
+            break;
+        case RequestOfprojectcancel:
+        {
+            [self projectcancel:self.keyword];
+        }
+            break;
+        case RequestOfsendmessage:
+        {
+            [self sendmessage:self.linkMans Context:self.sendMeassContext Title:self.sendMeassTitle];
+        }
+            break;
+        case RequestOffollow:
+        {
+            [self projectfollowID:self.followID Ramark:self.followContext Time:self.followTime];
+        }
+            break;
         
             
         default:
             break;
     }
+    self.keyword = @" ";
 }
 /*
  ---- 公共接口 ----
@@ -191,7 +207,6 @@ static NetManger *manger = nil;
      {
          NSLog(@"获取内容列表：%@",responseObject[@"data"]);
          NSArray *dataLists = responseObject[@"data"][@"DataList"];
-         NSLog(@"获取内容列表数组个数：%ld",dataLists.count);
          [self.m_listArr removeAllObjects];
          for (NSDictionary *dic in dataLists)
          {
@@ -199,13 +214,7 @@ static NetManger *manger = nil;
 //             NSLog(@"%@ %@ %@ %@",dic[@"ChannelName"],dic[@"Title"],dic[@"Author"],dic[@"Summary"]);
              model.summary = dic[@"Summary"];
              model.title = dic[@"Title"];
-             if ([dic[@"ChannelName"]isEqualToString:@"群发消息"]) {
-                 model.author = @"暂无";
-             }
-             else
-             {
-                 model.author = dic[@"Author"];
-             }
+             model.author = dic[@"Author"];
              model.listCreateDate = dic[@"CreateDate"];
              if (self.m_listArr.count == 0)
              {
@@ -256,8 +265,19 @@ static NetManger *manger = nil;
     NSString *url = [NSString stringWithFormat:@"%@common/advertise/getlist",ServerAddressURL ];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
-         NSLog(@"广告列表：%@",responseObject[@"data"]);
-        [LCProgressHUD showSuccess:@"加载成功"];
+//         NSLog(@"广告列表：%@",responseObject[@"data"]);
+         [self.m_alrerList removeAllObjects];
+         NSArray *datas = responseObject[@"data"];
+         for (NSDictionary *dic in datas)
+         {
+             if (self.m_alrerList.count == 0)
+             {
+                 self.m_alrerList = [[NSMutableArray alloc] initWithCapacity:0];
+             }
+            [self.m_alrerList addObject: dic[@"Photo"]];
+         }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"common/advertise/getlist" object:responseObject];
+
      } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
          NSLog(@"error : %@",error);
          [LCProgressHUD showFailure:@"获取数据失败"];
@@ -279,13 +299,14 @@ static NetManger *manger = nil;
     NSString *url = [NSString stringWithFormat:@"%@common/user/login",ServerAddressURL ];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
-         NSLog(@"登录：%@",responseObject[@"data"]);
+         NSLog(@"登录：%@",responseObject);
          self.code = responseObject[@"code"];
          self.title = responseObject[@"msg"];
          if ([responseObject[@"msg"] isEqualToString:@"success"]) {
              self.userID_Code = responseObject[@"data"][@"Code"];
              self.userId = responseObject[@"data"][@"UserId"];
              NSDictionary *dic = [NSDictionary dictionaryWithDictionary:responseObject[@"data"]];
+             self.AppRoleType = [NSString stringWithFormat:@"%@",dic[@"AppRoleType"]]; // 1 业主 2 发改委
              NSMutableArray *m_datas = [[NSMutableArray alloc] initWithCapacity:0];
              for (NSString *str in dic)
              {
@@ -423,7 +444,7 @@ static NetManger *manger = nil;
              [self.m_projectInfoArr addObject:model];
              
          }
-         [LCProgressHUD showSuccess:@"加载成功"];
+//         [LCProgressHUD showSuccess:@"加载成功"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"GetprojectlistWithKeyword" object:nil];
 
          
@@ -448,30 +469,17 @@ static NetManger *manger = nil;
     NSString *url = [NSString stringWithFormat:@"%@project/home/getproject",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
-         
-         /*
-          @property (nonatomic, copy) NSString *applyManName;     // 申请人
-          @property (nonatomic, copy) NSString *telephone;        // 电话
-          @property (nonatomic, copy) NSString *createTime;       // 时间
-          @property (nonatomic, copy) NSString *natureType;       // 项目性质
-          @property (nonatomic, copy) NSString *test3;            // 投资总额
-          @property (nonatomic, copy) NSString *projectName;      // 项目名称
-          @property (nonatomic, copy) NSString *companyType;      // 项目分类
-          @property (nonatomic, copy) NSString *categoryType;     // 行业
-          @property (nonatomic, copy) NSString *processStatus;    // 项目进度标识
-          @property (nonatomic, copy) NSString *questions;        // 存在问题
-          @property (nonatomic, copy) NSString *classTypeName;    // 投资种类
-          @property (nonatomic, copy) NSString *status;           // 项目状态标识
-          */
          NSDictionary *dic = [NSDictionary dictionaryWithDictionary:responseObject[@"data"]];
-         
-         
-//          NSMutableArray *m_datas = [[NSMutableArray alloc] initWithCapacity:0];
-//          for (NSString *str in dic)
-//          {
-//              [m_datas addObject:str];
-//          }
-         [self.m_details removeAllObjects];
+         NSArray *imgs = dic[@"Images"];
+        [self.m_details removeAllObjects];
+         [self.m_proImg removeAllObjects];
+         for (NSString *str in imgs)
+         {
+             if (self.m_proImg.count == 0) {
+                 self.m_proImg = [[NSMutableArray alloc] initWithCapacity:0];
+             }
+             [self.m_proImg addObject: str];
+         }
          for (int i = 0; i<13; i++)
          {
              ProjectModel *model = [[ProjectModel alloc] init];
@@ -487,28 +495,12 @@ static NetManger *manger = nil;
              model.questions        = [NSString stringWithFormat:@"%@",dic[@"Questions"]];
              model.classTypeName    = [NSString stringWithFormat:@"%@",dic[@"ClassTypeName"]];
              model.status           = [NSString stringWithFormat:@"%@",dic[@"Status"]];
-
              if (self.m_details.count == 0)
              {
                  self.m_details = [[NSMutableArray alloc] initWithCapacity:0];
              }
              [self.m_details addObject:model];
          }
-//         NSMutableArray *m_datas = [[NSMutableArray alloc] initWithCapacity:0];
-//         for (NSString *str in dic)
-//         {
-//             [m_datas addObject:str];
-//         }
-//         for (int i = 0; i<m_datas.count; i++)
-//         {
-//            NSLog(@"%@",[dic objectForKey:m_datas[i]]);
-//             if (self.m_details.count == 0)
-//             {
-//                  self.m_details = [[NSMutableArray alloc] initWithCapacity:0];
-//             }
-//             [self.m_details addObject:[dic objectForKey:m_datas[i]]];
-//
-//         }
         
          NSLog(@"项目详情：%@",responseObject[@"data"]);
          [LCProgressHUD showSuccess:@"加载成功"];
@@ -520,19 +512,21 @@ static NetManger *manger = nil;
      }];
 }
 #pragma mark - 保存上报项目
-- (void)homeProjectsaveWithArray:(NSArray *)array
+- (void)homeProjectsaveWithArray:(NSArray *)array ImgArr:(NSArray *)imgs
 {
+    if (imgs.count == 0)
+    {
+        imgs = @[@" "];
+    }
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 2;
-    NSLog(@"%@",array);
+//    NSLog(@"%@",array);
     NSDictionary *parameters = @{
                                  @"_appid":@"101",
                                  @"_code":self.userID_Code,
                                  @"content":@"application/json",
-                                 
-                                 @"ProjectId":      array[0], // 项目ID
+                                 @"ProjectId":      @"0", // 项目ID
                                  @"ProjectName":    array[1],// 项目名
-//                                 @"ApplyMan":       array[2],
                                  @"ApplyManName":   array[2], // 申请人
                                  @"Telephone":      array[3], // 电话
                                  @"NatureType":     array[4], // 项目性质
@@ -540,19 +534,20 @@ static NetManger *manger = nil;
                                  @"CategoryType":   array[6], // 行业
                                  @"CompanyType":    array[7], // 项目分类
                                  @"Questions":      array[8], // 存在问题
-//                                 @"ApprovalMan":    array[10],
-//                                 @"ApprovalManName": array[11], // 同意
-                                 @"CreateTime":     array[9], // 创建时间
+//                                 @"CreateTime":     array[9], // 创建时间
                                  @"CreateUserId":   array[10], //创建人用户ID
-//                                 @"Status":         array[14], // 审批状态
-                                 @"ProcessId":      array[11], // 进度状态
+                                 @"ProcessIdName":      array[11], // 进度状态
                                  @"AreaType":      array[12],// 开竣工
                                  @"IsHard":      array[13],// 攻坚
-                                 @"MoneyType":      array[14]// 投资总额
+                                 @"MoneyType":      array[14],// 投资总额
+                                 @"ImgData":imgs,// 项目图片
+                                 @"StartDate": array[15],// 开始时间
+                                 @"FinishDate": array[16]// 结束时间
                                  };
     NSString *url = [NSString stringWithFormat:@"%@project/home/projectsave",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
+//         NSLog(@"%@",parameters);
          NSLog(@"保存上报项目：%@",responseObject[@"data"]);
          [LCProgressHUD showSuccess:@"申请上报成功"];
      } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
@@ -680,14 +675,15 @@ static NetManger *manger = nil;
 - (void)userGetcontactsKeyword:(NSString *)keywork
 {
     if (keywork.length == 0) {
-        keywork = @"0";
+        keywork = @" ";
     }
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 5;
     NSDictionary *parameters = @{
                                  @"_appid":@"101",
                                  @"_code":self.userID_Code,
-                                 @"Keyword":keywork,
+                                 @"content":@"application/json",
+//                                 @"Keyword":keywork,
                                  };
     NSString *url = [NSString stringWithFormat:@"%@common/user/getcontacts",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
@@ -698,13 +694,40 @@ static NetManger *manger = nil;
          [self.m_getcontacts removeAllObjects];
          for (NSDictionary *dic in dataLists)
          {
-             ProjectModel *model = [[ProjectModel alloc] init]; 
-//            NSLog(@"%@ %@ %@ %@",dic[@"LinkManName"],dic[@"LinkPhone"],dic[@"LinkMobile"],dic[@"ZhiWuName"]);
-             model.linkID = dic[@"UserId"];
+             ProjectModel *model = [[ProjectModel alloc] init];
+             model.linkID = dic[@"LinkUserId"];
              model.linkManName = dic[@"LinkManName"];
-             model.linkPhone = dic[@"LinkPhone"];
-             model.linkMobile = dic[@"LinkMobile"];
-             model.zhiWuName = dic[@"ZhiWuName"];
+             
+             NSString *value2 = [dic objectForKey:@"ZhiWuName"];
+             if ((NSNull *)value2 == [NSNull null])
+             {
+                 model.zhiWuName = @" ";
+             }
+             else
+             {
+                 model.zhiWuName = @" ";
+             }
+             
+             NSString *value = [dic objectForKey:@"LinkPhone"];
+             if ((NSNull *)value == [NSNull null])
+             {
+                 model.linkPhone = @"无";
+             }
+             else
+             {
+                 model.linkPhone = dic[@"LinkPhone"];
+             }
+             
+             NSString *value3 = [dic objectForKey:@"LinkMobile"];
+             if ((NSNull *)value3 == [NSNull null])
+             {
+                 model.linkMobile = @"无";
+             }
+             else
+             {
+                 model.linkMobile = dic[@"LinkMobile"];
+             }
+             
              if (self.m_getcontacts.count == 0)
              {
                  self.m_getcontacts = [[NSMutableArray alloc] initWithCapacity:0];
@@ -721,7 +744,7 @@ static NetManger *manger = nil;
      }];
 }
 #pragma mark - 群发
-- (void)sendmessage
+- (void)sendmessage:(NSArray *)sendUsers Context:(NSString *)context Title:(NSString *)title
 {
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 5;
@@ -730,12 +753,13 @@ static NetManger *manger = nil;
                                  @"_code":self.userID_Code,
                                  @"content":@"application/json",
                                  
-                                 @"SendUsers": @[@"1",@"2",@"admin"],
-                                 @"Id": @"1",
-                                 @"UserFrom": @"1",
-                                 @"UserTo": @"1",
-                                 @"CreateTime": [self getDate],
-                                 @"DataContent": @"xxxxx"
+                                 @"SendUsers": sendUsers,
+//                                 @"Id": self.userId,
+//                                 @"UserFrom": @"1",
+//                                 @"UserTo": @"1",
+//                                 @"CreateTime": [self getDate],
+                                 @"HeadTitle": title,
+                                 @"DataContent": context
                                  };
     NSString *url = [NSString stringWithFormat:@"%@common/user/sendmessage",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
@@ -776,26 +800,28 @@ static NetManger *manger = nil;
          [LCProgressHUD showFailure:@"获取数据失败"];
      }];
 }
-- (void)projectfollow
+- (void)projectfollowID:(NSString *)ID Ramark:(NSString *)remark Time:(NSString *)time
 {
+    if (time.length == 0) {
+        time = [self getDate];
+    }
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     manger.requestSerializer.timeoutInterval = 5;
     NSDictionary *parameters = @{
                                  @"_appid":@"101",
                                  @"_code":self.userID_Code,
                                  @"content":@"application/json",
-                                 
-                                 @"Id": @"1",
-                                 @"ProjectId": @"1",
-                                 @"sType": @"3",
-                                 @"Remark": @"ios test",
-                                 @"CreateUserId": @"1",
-                                 @"CreateUsesrName": @"ios",
+                                
+                                 @"ProjectId": ID,
+                                 @"sType": @"1",
+                                 @"Remark": remark,
+                                 @"FollowDate": time,
                                  };
     NSString *url = [NSString stringWithFormat:@"%@project/home/projectfollow",ServerAddressURL];
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
-         NSLog(@"项目跟踪：%@",responseObject[@"data"]);
+         NSLog(@"项目跟踪：%@",responseObject[@"msg"]);
+         [LCProgressHUD showInfoMsg:@"操作成功"];
          
      } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
          NSLog(@"error : %@",error);
@@ -820,6 +846,23 @@ static NetManger *manger = nil;
     [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
      {
          NSLog(@"群发消息列表：%@",responseObject);
+         NSArray *dataLists = responseObject[@"data"][@"DataList"];
+         [self.m_messages removeAllObjects];
+         for (NSDictionary *dic in dataLists)
+         {
+             ProjectModel *model = [[ProjectModel alloc] init];
+             model.messageID = dic[@"Id"];
+             model.messageeName = dic[@"UserNameFrom"];
+             model.messageContext = dic[@"DataContent"];
+             model.messageTime = dic[@"CreateTime"];
+             if (self.m_messages.count == 0)
+             {
+                 self.m_messages = [[NSMutableArray alloc] initWithCapacity:0];
+             }
+             [self.m_messages addObject:model];
+         }
+         [LCProgressHUD showSuccess:@"加载成功"];
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"getmessagelist" object:nil];
          
      } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
          NSLog(@"error : %@",error);
@@ -851,53 +894,18 @@ static NetManger *manger = nil;
           CheckCuauses	:	非常有创意
           
           */
-         NSDictionary *dic = responseObject[@"data"];
-         NSArray *datas = dic[@"ProcessList"];
+         NSDictionary *datas = responseObject[@"data"][@"FollowList"];
          [self.m_processArr removeAllObjects];
          for (NSDictionary *dic in datas) {
-//             NSLog(@"%@",dic[@"StructureName"]);
              ProjectModel *model = [[ProjectModel alloc] init];
-//             model.processID            = dic[@"ProjectId"];
-             if (![dic[@"ProjectId"] isKindOfClass:[NSNull class]]) {
-                 model.processID     = dic[@"ProjectId"];
-             }
-             else
-             {
-                 model.processID  = @"无";
-             }
-//             model.processStructureName = dic[@"StructureName"];
-             if (![dic[@"StructureName"] isKindOfClass:[NSNull class]]) {
-                 model.processStructureName     = dic[@"StructureName"];
-             }
-             else
-             {
-                 model.processStructureName  = @"无";
-             }
-             
-             if (![dic[@"CheckTime"] isKindOfClass:[NSNull class]]) {
-                 model.processCheckTime     = dic[@"CheckTime"];
-             }
-             else
-             {
-                 model.processCheckTime  = @"无";
-             }
-             
-             model.processCheckUserName = dic[@"CheckUserName"];
-             
-             if (![dic[@"CheckCuauses"] isKindOfClass:[NSNull class]]) {
-                 model.processCheckCuauses  = dic[@"CheckCuauses"];
-             }
-             else
-             {
-                 model.processCheckCuauses  = @"无";
-             }
-             
+             model.processCheckCuauses = dic[@"Remark"];
+             model.processCheckTime = dic[@"FollowDate"];
              if (self.m_processArr.count == 0) {
                  self.m_processArr = [[NSMutableArray alloc] initWithCapacity:0];
              }
              [self.m_processArr addObject:model];
          }
-         [LCProgressHUD showSuccess:@"加载成功"];
+//         [LCProgressHUD showSuccess:@"加载成功"];
          [[NSNotificationCenter defaultCenter] postNotificationName:@"Getprojects" object:nil];
      } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
          NSLog(@"error : %@",error);
@@ -905,12 +913,40 @@ static NetManger *manger = nil;
          
      }];
 }
-
+#pragma mark - 撤销
+- (void)projectcancel:(NSString *)ID
+{
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+    manger.requestSerializer.timeoutInterval = 5;
+    NSDictionary *parameters = @{
+                                 @"_appid":@"101",
+                                 @"_code":self.userID_Code,
+                                 @"content":@"application/json",
+                                 
+                                 @"Id": ID,
+                                 };
+    NSString *url = [NSString stringWithFormat:@"%@project/home/projectcancel",ServerAddressURL];
+    [manger POST:url parameters:parameters success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject)
+     {
+         NSLog(@"撤销信息：%@",responseObject);
+         if ([responseObject[@"msg"] isEqualToString:@"success"])
+         {
+            [LCProgressHUD showSuccess:@"撤销成功"];
+         }
+         else
+         {
+             [LCProgressHUD showSuccess:responseObject[@"msg"]];
+         }
+     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+         NSLog(@"error : %@",error);
+         [LCProgressHUD showFailure:@"撤销失败"];
+     }];
+}
 - (NSString *)getDate
 {
     NSDate *currentDate = [NSDate date];//获取当前时间，日期
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"YYYY/MM/dd hh:mm"];
+    [dateFormatter setDateFormat:@"YYYY-MM-dd"];
     NSString *dateString = [dateFormatter stringFromDate:currentDate];
     NSLog(@"dateString:%@",dateString);
     return dateString;

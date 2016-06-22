@@ -91,8 +91,15 @@ typedef enum
     
     RequestOfGetprojectts,           // 项目进度详情
     
-    RequestOfProjectcheck           // 项目进度详情
+    RequestOfProjectcheck,           // 项目进度详情
     
+    RequestOfgetmessagelist,           // 群发列表
+    
+    RequestOfprojectcancel,           // 撤销申请
+    
+    RequestOfsendmessage,           // 群发
+    
+    RequestOffollow,           // 跟进
     
 }RequestState;
 
@@ -100,6 +107,7 @@ typedef enum
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *code;
+@property (nonatomic, copy) NSString *AppRoleType;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *password;
 @property (nonatomic, copy) NSString *userID_Code;
@@ -109,14 +117,23 @@ typedef enum
 @property (nonatomic, copy) NSString *projectID;
 @property (nonatomic, copy) NSString *channelID;
 @property (nonatomic, strong) NSArray *formArray;
+@property (nonatomic, strong) NSArray *linkMans;
+@property (nonatomic, copy) NSString *sendMeassContext;
+@property (nonatomic, copy) NSString *sendMeassTitle;
 @property (nonatomic, copy) NSString *keyword;
-
+@property (nonatomic, copy) NSString *followID;
+@property (nonatomic, copy) NSString *followTime;
+@property (nonatomic, copy) NSString *followContext;
 @property (nonatomic, copy) NSString *userId;
+@property (nonatomic, strong) NSMutableArray *m_alrerList;
 @property (nonatomic, strong) NSMutableArray *m_details;
 @property (nonatomic, strong) NSMutableArray *m_projectInfoArr;
 @property (nonatomic, strong) NSMutableArray *m_listArr;
 @property (nonatomic, strong) NSMutableArray *m_getcontacts;
 @property (nonatomic, strong) NSMutableArray *m_processArr;
+@property (nonatomic, strong) NSMutableArray *m_messages;
+@property (nonatomic, strong) NSMutableArray *m_proImg;           // 项目图片
+@property (nonatomic,strong)NSArray *projectImgs;
 @property (nonatomic, assign) BOOL isKeyword;
 + (instancetype)shareInstance;
 - (void)loadData:(RequestState)requet;

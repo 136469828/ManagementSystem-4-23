@@ -12,5 +12,6 @@
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) UILabel *subLabel;
 @property (nonatomic, copy) NSString *proID;
+@property (nonatomic, assign) int isNodo;
 
 @end

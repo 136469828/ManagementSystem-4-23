@@ -7,11 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class FansListsModel;
 @interface ContactsTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *nameLab;
 @property (weak, nonatomic) IBOutlet UILabel *phoneLab;
 @property (weak, nonatomic) IBOutlet UILabel *telLab;
 @property (weak, nonatomic) IBOutlet UILabel *zhiwuLab;
+@property (weak, nonatomic) IBOutlet UIButton *m_imageBtn;
++ (instancetype)selectedCell:(UITableView *)tableView;
 
+@property (nonatomic, strong) FansListsModel *m_model;
+
+- (void)rowSelected;
 @end

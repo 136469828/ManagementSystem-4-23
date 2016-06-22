@@ -41,4 +41,11 @@
 @property (nonatomic, copy) NSString *processCheckUserName;
 @property (nonatomic, copy) NSString *processCheckCuauses;
 
+#pragma mark - 群发消息详情
+@property (nonatomic, copy) NSString *messageID;
+@property (nonatomic, copy) NSString *messageeName;
+@property (nonatomic, copy) NSString *messageTime;
+@property (nonatomic, copy) NSString *messageContext;
+
+
 @end

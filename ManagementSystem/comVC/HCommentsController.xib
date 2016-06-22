@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HCommentsController">
+            <connections>
+                <outlet property="sendBtn" destination="g1y-Ig-EIS" id="Z2n-6X-3oy"/>
+                <outlet property="textView" destination="t1L-UK-VKj" id="Lp2-vf-AMl"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g1y-Ig-EIS">
+                    <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                    <color key="backgroundColor" red="0.46440261602401733" green="0.6582527756690979" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <state key="normal" title="发       表">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                </button>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="t1L-UK-VKj">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dpc-zb-15l">
+                    <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                    <color key="backgroundColor" red="0.29156894919999998" green="0.70178332669999999" blue="0.87397639220000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="选择时间">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="timeBTN:" destination="-1" eventType="touchUpInside" id="J44-v7-2nq"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Dpc-zb-15l" firstAttribute="leading" secondItem="g1y-Ig-EIS" secondAttribute="leading" id="90d-YB-Zoj"/>
+                <constraint firstAttribute="trailing" secondItem="t1L-UK-VKj" secondAttribute="trailing" constant="10" id="BR8-a6-AMH"/>
+                <constraint firstItem="t1L-UK-VKj" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="10" id="EZ0-Wr-e4Z"/>
+                <constraint firstAttribute="trailing" secondItem="g1y-Ig-EIS" secondAttribute="trailing" constant="50" id="Phr-gx-lAh"/>
+                <constraint firstItem="g1y-Ig-EIS" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="300" id="XiF-UF-Uby"/>
+                <constraint firstItem="Dpc-zb-15l" firstAttribute="trailing" secondItem="g1y-Ig-EIS" secondAttribute="trailing" id="ZKZ-Fm-YQc"/>
+                <constraint firstItem="g1y-Ig-EIS" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="50" id="Zeg-wI-pl5"/>
+                <constraint firstItem="t1L-UK-VKj" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="39" id="gxi-fA-sWo"/>
+                <constraint firstItem="g1y-Ig-EIS" firstAttribute="top" secondItem="t1L-UK-VKj" secondAttribute="bottom" constant="60" id="k2N-NH-FZ7"/>
+                <constraint firstItem="g1y-Ig-EIS" firstAttribute="top" secondItem="Dpc-zb-15l" secondAttribute="bottom" constant="8" id="kZB-oR-ZNC"/>
+            </constraints>
+            <variation key="default">
+                <mask key="subviews">
+                    <exclude reference="g1y-Ig-EIS"/>
+                    <exclude reference="t1L-UK-VKj"/>
+                    <exclude reference="Dpc-zb-15l"/>
+                </mask>
+                <mask key="constraints">
+                    <exclude reference="BR8-a6-AMH"/>
+                    <exclude reference="EZ0-Wr-e4Z"/>
+                    <exclude reference="gxi-fA-sWo"/>
+                    <exclude reference="90d-YB-Zoj"/>
+                    <exclude reference="ZKZ-Fm-YQc"/>
+                    <exclude reference="Phr-gx-lAh"/>
+                    <exclude reference="XiF-UF-Uby"/>
+                    <exclude reference="Zeg-wI-pl5"/>
+                    <exclude reference="k2N-NH-FZ7"/>
+                    <exclude reference="kZB-oR-ZNC"/>
+                </mask>
+            </variation>
+            <variation key="widthClass=compact">
+                <mask key="subviews">
+                    <include reference="g1y-Ig-EIS"/>
+                    <include reference="t1L-UK-VKj"/>
+                    <include reference="Dpc-zb-15l"/>
+                </mask>
+                <mask key="constraints">
+                    <include reference="BR8-a6-AMH"/>
+                    <include reference="EZ0-Wr-e4Z"/>
+                    <include reference="gxi-fA-sWo"/>
+                    <include reference="90d-YB-Zoj"/>
+                    <include reference="ZKZ-Fm-YQc"/>
+                    <include reference="Phr-gx-lAh"/>
+                    <include reference="XiF-UF-Uby"/>
+                    <include reference="Zeg-wI-pl5"/>
+                    <include reference="k2N-NH-FZ7"/>
+                    <include reference="kZB-oR-ZNC"/>
+                </mask>
+            </variation>
+        </view>
+    </objects>
+</document>

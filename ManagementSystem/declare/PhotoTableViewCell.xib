@@ -18,57 +18,42 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xNe-sE-Of3">
                         <rect key="frame" x="8" y="97" width="304" height="94"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="审批人:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ohm-eU-sHt">
-                                <rect key="frame" x="8" y="8" width="50" height="18"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="开始时间:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ohm-eU-sHt">
+                                <rect key="frame" x="8" y="8" width="64.5" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="抄    送:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oor-HP-Zs3">
-                                <rect key="frame" x="8" y="53" width="51" height="18"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="结束时间:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oor-HP-Zs3">
+                                <rect key="frame" x="8" y="68" width="64.5" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tZo-HU-jxI">
-                                <rect key="frame" x="66" y="5" width="183" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="OCt-JU-STQ">
-                                <rect key="frame" x="67" y="46" width="182" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ebr-Hx-8I4">
-                                <rect key="frame" x="266" y="8" width="30" height="30"/>
-                                <connections>
-                                    <action selector="addNameBtn:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="aqt-UM-iM3"/>
-                                </connections>
+                                <rect key="frame" x="81" y="8" width="185" height="30"/>
+                                <state key="normal">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FY3-Ew-Amv">
-                                <rect key="frame" x="266" y="46" width="30" height="30"/>
-                                <connections>
-                                    <action selector="addCCnameBtn:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Zj3-uq-RXh"/>
-                                </connections>
+                                <rect key="frame" x="81" y="68" width="185" height="30"/>
+                                <state key="normal">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="FY3-Ew-Amv" firstAttribute="leading" secondItem="OCt-JU-STQ" secondAttribute="trailing" constant="17" id="1qa-yz-OAa"/>
-                            <constraint firstItem="Ohm-eU-sHt" firstAttribute="top" secondItem="xNe-sE-Of3" secondAttribute="top" constant="8" id="4rw-t2-p3Z"/>
-                            <constraint firstItem="tZo-HU-jxI" firstAttribute="leading" secondItem="Ohm-eU-sHt" secondAttribute="trailing" constant="8" id="KUx-ng-jl0"/>
-                            <constraint firstItem="OCt-JU-STQ" firstAttribute="leading" secondItem="oor-HP-Zs3" secondAttribute="trailing" constant="8" id="KXa-Lp-w18"/>
-                            <constraint firstAttribute="bottom" secondItem="oor-HP-Zs3" secondAttribute="bottom" constant="23" id="Kyh-KR-l2K"/>
-                            <constraint firstItem="Ebr-Hx-8I4" firstAttribute="top" secondItem="xNe-sE-Of3" secondAttribute="top" constant="8" id="LbN-bO-GfU"/>
-                            <constraint firstAttribute="bottom" secondItem="OCt-JU-STQ" secondAttribute="bottom" constant="18" id="LkA-OJ-Gar"/>
-                            <constraint firstAttribute="bottom" secondItem="FY3-Ew-Amv" secondAttribute="bottom" constant="18" id="SMT-i2-ZDb"/>
-                            <constraint firstAttribute="trailing" secondItem="Ebr-Hx-8I4" secondAttribute="trailing" constant="8" id="Xc7-4r-9UK"/>
-                            <constraint firstItem="Ebr-Hx-8I4" firstAttribute="leading" secondItem="tZo-HU-jxI" secondAttribute="trailing" constant="17" id="ZeX-Qb-cSB"/>
-                            <constraint firstItem="tZo-HU-jxI" firstAttribute="top" secondItem="xNe-sE-Of3" secondAttribute="top" constant="5" id="hLB-UL-qOU"/>
-                            <constraint firstItem="OCt-JU-STQ" firstAttribute="top" secondItem="tZo-HU-jxI" secondAttribute="bottom" constant="11" id="ku9-Ic-b61"/>
-                            <constraint firstAttribute="trailing" secondItem="FY3-Ew-Amv" secondAttribute="trailing" constant="8" id="q9N-qj-izG"/>
-                            <constraint firstItem="Ohm-eU-sHt" firstAttribute="leading" secondItem="xNe-sE-Of3" secondAttribute="leading" constant="8" id="qEZ-1d-qE0"/>
-                            <constraint firstItem="oor-HP-Zs3" firstAttribute="leading" secondItem="xNe-sE-Of3" secondAttribute="leading" constant="8" id="uYM-yf-0sS"/>
+                            <constraint firstItem="Ohm-eU-sHt" firstAttribute="top" secondItem="xNe-sE-Of3" secondAttribute="top" constant="8" id="3K7-Hu-lUB"/>
+                            <constraint firstItem="Ebr-Hx-8I4" firstAttribute="top" secondItem="Ohm-eU-sHt" secondAttribute="top" id="5ub-AT-ehJ"/>
+                            <constraint firstItem="Ohm-eU-sHt" firstAttribute="leading" secondItem="xNe-sE-Of3" secondAttribute="leading" constant="8" id="741-sT-IzN"/>
+                            <constraint firstItem="oor-HP-Zs3" firstAttribute="leading" secondItem="xNe-sE-Of3" secondAttribute="leading" constant="8" id="EkC-9q-sug"/>
+                            <constraint firstAttribute="bottom" secondItem="oor-HP-Zs3" secondAttribute="bottom" constant="8" id="Hnj-N2-bZ1"/>
+                            <constraint firstItem="Ebr-Hx-8I4" firstAttribute="leading" secondItem="Ohm-eU-sHt" secondAttribute="trailing" constant="8.5" id="LAx-GO-ctN"/>
+                            <constraint firstItem="FY3-Ew-Amv" firstAttribute="leading" secondItem="oor-HP-Zs3" secondAttribute="trailing" constant="8.5" id="aNQ-3o-lmN"/>
+                            <constraint firstItem="Ebr-Hx-8I4" firstAttribute="trailing" secondItem="FY3-Ew-Amv" secondAttribute="trailing" id="dKC-Al-AQ7"/>
+                            <constraint firstItem="FY3-Ew-Amv" firstAttribute="top" secondItem="oor-HP-Zs3" secondAttribute="top" id="oB8-cw-3dC"/>
+                            <constraint firstAttribute="trailing" secondItem="FY3-Ew-Amv" secondAttribute="trailing" constant="38" id="qZ4-ot-7wl"/>
                         </constraints>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X4E-hA-dQQ">
@@ -110,12 +95,10 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="ApproverTF" destination="tZo-HU-jxI" id="UFH-7C-DwS"/>
-                <outlet property="CCnameBtn" destination="FY3-Ew-Amv" id="mO6-vv-k7X"/>
-                <outlet property="CopyCTF" destination="OCt-JU-STQ" id="MFu-7i-OgF"/>
-                <outlet property="nameBtn" destination="Ebr-Hx-8I4" id="oNe-Ky-DoZ"/>
+                <outlet property="finshTimeBtn" destination="FY3-Ew-Amv" id="Qf7-YG-RIY"/>
                 <outlet property="openCrama" destination="a3U-qa-j29" id="vwW-bP-5mp"/>
                 <outlet property="ptotoOne" destination="Les-4a-Bgw" id="pRx-mP-SxQ"/>
+                <outlet property="starTimeBtn" destination="Ebr-Hx-8I4" id="LBt-e3-ju1"/>
             </connections>
             <point key="canvasLocation" x="369" y="324"/>
         </tableViewCell>

@@ -10,14 +10,10 @@
 
 @interface PhotoTableViewCell : UITableViewCell<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ptotoOne;
-@property (weak, nonatomic) IBOutlet UIImageView *photoTwo;
-@property (weak, nonatomic) IBOutlet UIImageView *photoThree;
-@property (weak, nonatomic) IBOutlet UITextField *ApproverTF;
-@property (weak, nonatomic) IBOutlet UITextField *CopyCTF;
-@property (weak, nonatomic) IBOutlet UIButton *nameBtn;
-@property (weak, nonatomic) IBOutlet UIButton *CCnameBtn;
-@property (nonatomic, strong) UIView *closeV;
-@property (weak, nonatomic) IBOutlet UIButton *visitPhoto;
+@property (weak, nonatomic) IBOutlet UIButton *starTimeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *finshTimeBtn;
+
 @property (weak, nonatomic) IBOutlet UIButton *openCrama;
+@property (nonatomic, strong) NSMutableArray *array;
 
 @end

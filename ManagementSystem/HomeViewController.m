@@ -7,7 +7,8 @@
 //
 
 #import "HomeViewController.h"
-
+#import "NetManger.h"
+#import "SDCycleScrollView.h"
 // 二级Controller
 #import "SeachViewController.h"
 #import "NormalViewController.h"
@@ -17,10 +18,11 @@
 #import "ProjectSrachViewController.h"
 #import "SettingViewController.h"
 #import "ScrollView.h"
-@interface HomeViewController ()
+@interface HomeViewController ()<SDCycleScrollViewDelegate>
 {
     UIScrollView *mainScrollView;
     ScrollView *announcementScroV;
+    NetManger *manger;
 }
 
 @end
@@ -28,6 +30,9 @@
 @implementation HomeViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    manger = [NetManger shareInstance];
+    [manger loadData:RequestOfGetlist];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataw) name:@"common/advertise/getlist" object:nil];
     if(mainScrollView == nil)
     {
         mainScrollView = [[UIScrollView alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -36,7 +41,7 @@
         mainScrollView.showsHorizontalScrollIndicator = YES;
         mainScrollView.alwaysBounceVertical = YES;
         mainScrollView.scrollEnabled = YES;
-        UIView *blackView = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenWidth*0.28+59, ScreenWidth, 100*3+15)];
+        UIView *blackView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth/3*2+ScreenWidth*0.56-12)];
         blackView.backgroundColor = [UIColor lightGrayColor];
         [mainScrollView addSubview:blackView];
         [self.view addSubview:mainScrollView];
@@ -44,10 +49,28 @@
 //    self.view.backgroundColor = [UIColor lightGrayColor];
     self.title = @"欢迎使用莆田北岸发改局管理系统";
     // Do any additional setup after loading the view from its nib.
-    NSArray *titles = @[@"公告", @"提醒信息", @"项目查询", @"上报项目", @"我的项目", @"群发消息", @"常用联系人",@"设置",@" "];
-    NSArray *imageNames = @[@"home_gonggao",@"home_tixin",@"home_chaxun.jpg",@"home_shangbao",@"home_wodexiangmu",@"home_qunfa",@"home_lianxiren",@"home_setting",@" "];
-    [self drawHoneViewWithAppviewW:ScreenWidth/3 AppviewH:100 Totalloc:3 Count:9 ImageArray:imageNames TitleArray:titles];
-    [self _initAnnouncementView];
+    if ([manger.AppRoleType isEqualToString:@"1"])
+    {
+        NSArray *titles = @[@"公告", @"提醒信息", @"上报项目", @"我的项目",@"群发消息",@"设置"];
+        NSArray *imageNames = @[@"home_gonggao",@"home_tixin",@"home_chaxun.jpg",@"home_shangbao",@"home_wodexiangmu",@"home_qunfa",@"home_lianxiren",@"home_setting",@" "];
+        [self drawHoneViewWithAppviewW:ScreenWidth/3 AppviewH:ScreenWidth/3 Totalloc:3 Count:6 ImageArray:imageNames TitleArray:titles];
+    }
+    else
+    {
+        NSArray *titles = @[@"公告", @"提醒信息", @"项目查询", @"常用联系人",@"群发消息",@"设置"];
+        NSArray *imageNames = @[@"home_gonggao",@"home_tixin",@"home_chaxun.jpg",@"home_shangbao",@"home_wodexiangmu",@"home_qunfa",@"home_lianxiren",@"home_setting",@" "];
+        [self drawHoneViewWithAppviewW:ScreenWidth/3 AppviewH:ScreenWidth/3 Totalloc:3 Count:6 ImageArray:imageNames TitleArray:titles];
+    }
+}
+#pragma mark - 公告栏announcementView
+- (void)reloadDataw
+{
+    // 网络加载 --- 创建自定义图片的pageControlDot的图片轮播器
+    SDCycleScrollView *cycleScrollView3 = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth*0.56) delegate:self placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    cycleScrollView3.currentPageDotImage = [UIImage imageNamed:@"pageControlCurrentDot"];
+    cycleScrollView3.pageDotImage = [UIImage imageNamed:@"pageControlDot"];
+    cycleScrollView3.imageURLStringsGroup = manger.m_alrerList;
+    [mainScrollView addSubview:cycleScrollView3];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -64,12 +87,12 @@
     // Pass the selected object to the new view controller.
 }
 */
-#pragma mark - 公告栏announcementView
-- (void)_initAnnouncementView{
-    announcementScroV = [[ScrollView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight*0.28)];
-    [mainScrollView addSubview:announcementScroV];
-    
-}
+
+//- (void)_initAnnouncementView{
+//    announcementScroV = [[ScrollView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight*0.28)];
+//    [mainScrollView addSubview:announcementScroV];
+//    
+//}
 #pragma mark - 创建九宫格
 - (void)drawHoneViewWithAppviewW:(CGFloat)appviewWith AppviewH:(CGFloat)appviewHeght Totalloc:(int)totalloc Count:(int)count ImageArray:(NSArray *)images TitleArray:(NSArray *)titles{
 //    三列
@@ -108,7 +131,7 @@
         [appview addSubview:appimageview];
         
         //创建文本标签
-        UILabel *applable=[[UILabel alloc]initWithFrame:CGRectMake(0, 70, appview.bounds.size.width, 20)];
+        UILabel *applable=[[UILabel alloc]initWithFrame:CGRectMake(0, appview.bounds.size.height - 30, appview.bounds.size.width, 20)];
         //        applable.backgroundColor = [UIColor redColor];
         [applable setText:titles[i]];
         [applable setTextAlignment:NSTextAlignmentCenter];
@@ -139,28 +162,51 @@
             [self.navigationController pushViewController:normalV animated:YES];
         }
             break;
+//        case 1002:
+//        {
+//            ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
+//            seachV.title = @"项目查询";
+//            [self.navigationController pushViewController:seachV animated:YES];
+//        }
+//            break;
         case 1002:
         {
-            ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
-            seachV.title = @"项目查询";
-            [self.navigationController pushViewController:seachV animated:YES];
+             if ([manger.AppRoleType isEqualToString:@"1"])
+             {
+                 SetRemindViewController *declareCrt = [[SetRemindViewController alloc] init];
+                 declareCrt.title = @"上报项目申报单";
+                 declareCrt.hidesBottomBarWhenPushed = YES;
+                 [self.navigationController pushViewController:declareCrt animated:YES];
+             }
+            else
+            {
+                ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
+                seachV.title = @"项目查询";
+                [self.navigationController pushViewController:seachV animated:YES];
+            }
+            
         }
             break;
         case 1003:
         {
-            SetRemindViewController *declareCrt = [[SetRemindViewController alloc] init];
-            declareCrt.title = @"上报项目申报单";
-            declareCrt.hidesBottomBarWhenPushed = YES;
-            [self.navigationController pushViewController:declareCrt animated:YES];
-        }
-            break;
-        case 1004:
-        {
-            //SeachViewController *seachV= [[SeachViewController alloc] init];
-            ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
-            seachV.title = @"我的项目";
-            //seachV.state = btn.tag;
-            [self.navigationController pushViewController:seachV animated:YES];
+ 
+            if ([manger.AppRoleType isEqualToString:@"1"])
+            {
+                ProjectSrachViewController *seachV= [[ProjectSrachViewController alloc] init];
+                seachV.title = @"我的项目";
+                //seachV.state = btn.tag;
+                [self.navigationController pushViewController:seachV animated:YES];
+            }
+ 
+            else
+            {
+  
+                ContactsViewController *contactsVC= [[ContactsViewController alloc] init];
+                contactsVC.title = @"常用联系人";
+                [self.navigationController pushViewController:contactsVC animated:YES];
+
+            }
+            
         }
             break;
 //        case 1005:
@@ -172,21 +218,22 @@
 //            [self.navigationController pushViewController:seachV animated:YES];
 //        }
             break;
+        case 1004:
+        {
+                MassViewController *massVC= [[MassViewController alloc] init];
+                massVC.title = @"群发消息";
+                [self.navigationController pushViewController:massVC animated:YES];
+   
+        }
+            break;
+//        case 1006:
+//        {
+//            ContactsViewController *contactsVC= [[ContactsViewController alloc] init];
+//            contactsVC.title = @"常用联系人";
+//            [self.navigationController pushViewController:contactsVC animated:YES];
+//        }
+//            break;
         case 1005:
-        {
-            MassViewController *massVC= [[MassViewController alloc] init];
-            massVC.title = @"群发消息";
-            [self.navigationController pushViewController:massVC animated:YES];
-        }
-            break;
-        case 1006:
-        {
-            ContactsViewController *contactsVC= [[ContactsViewController alloc] init];
-            contactsVC.title = @"常用联系人";
-            [self.navigationController pushViewController:contactsVC animated:YES];
-        }
-            break;
-        case 1007:
         {
             SettingViewController *setVC= [[SettingViewController alloc] init];
             setVC.title = @"账号设置";
